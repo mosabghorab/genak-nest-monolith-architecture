@@ -1,0 +1,5 @@
+export enum AttachmentStatus {
+  REQUIRED_FOR_UPLOAD = 'REQUIRED_FOR_UPLOAD',
+  PENDING = 'PENDING',
+  APPROVED = 'APPROVED',
+}

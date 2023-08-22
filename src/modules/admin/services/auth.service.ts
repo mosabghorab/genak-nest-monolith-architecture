@@ -1,8 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { SignInWithEmailAndPasswordDto } from '../dtos/sign-in-with-email-and-password.dto';
 import { AdminsService } from './admins.service';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,7 @@ export class AuthService {
       !admin ||
       !(await admin.comparePassword(signInWithEmailAndPasswordDto.password))
     ) {
-      throw new NotFoundException('Admin not found.');
+      throw new UnauthorizedException('Wrong email or password.');
     }
     const accessToken = await this.jwtService.signAsync({
       id: admin.id,
@@ -31,5 +32,10 @@ export class AuthService {
       adminsRoles: admin.adminsRoles,
     });
     return { ...admin, accessToken };
+  }
+
+  // change password.
+  async changePassword(adminId: number, changePasswordDto: ChangePasswordDto) {
+    return this.adminsService.changePassword(adminId, changePasswordDto);
   }
 }

@@ -13,6 +13,8 @@ import { FindAllAdminsDto } from '../dtos/find-all-admins.dto';
 import { Helpers } from '../../../core/helpers';
 import { AdminsRoles } from '../entities/admins-roles.entity';
 import { AdminsRolesService } from './admins-roles.service';
+import { UpdateProfileDto } from '../dtos/update-profile.dto';
+import { ChangePasswordDto } from '../dtos/change-password.dto';
 
 @Injectable()
 export class AdminsService {
@@ -105,6 +107,35 @@ export class AdminsService {
       );
     }
     Object.assign(admin, updateAdminDto);
+    return this.adminRepository.save(admin);
+  }
+
+  // update profile.
+  async updateProfile(adminId: number, updateProfileDto: UpdateProfileDto) {
+    const admin = await this.findOneById(adminId);
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+    if (updateProfileDto.email) {
+      const adminByEmail = await this.findOneByEmail(updateProfileDto.email);
+      if (adminByEmail) {
+        throw new BadRequestException('Email is already exists.');
+      }
+    }
+    Object.assign(admin, updateProfileDto);
+    return this.adminRepository.save(admin);
+  }
+
+  // change password.
+  async changePassword(adminId: number, changePasswordDto: ChangePasswordDto) {
+    const admin = await this.findOneById(adminId);
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+    if (!(await admin.comparePassword(changePasswordDto.oldPassword))) {
+      throw new BadRequestException('Wrong old password.');
+    }
+    admin.password = changePasswordDto.newPassword;
     return this.adminRepository.save(admin);
   }
 

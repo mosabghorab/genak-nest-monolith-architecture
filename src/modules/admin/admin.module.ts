@@ -38,6 +38,11 @@ import { DocumentsController } from './controllers/documents.controller';
 import { OnBoardingScreen } from '../shared/entities/on-boarding-screen.entity';
 import { OnBoardingScreensController } from './controllers/on-boarding-screens.controller';
 import { OnBoardingScreensService } from './services/on-boarding-screens.service';
+import { ProfileController } from './controllers/profile.controller';
+import { ProfileService } from './services/profile.service';
+import { ComplainsService } from './services/complains.service';
+import { ComplainsController } from './controllers/complains.controller';
+import { Complain } from '../shared/entities/complain.entity';
 
 @Module({
   imports: [
@@ -56,6 +61,7 @@ import { OnBoardingScreensService } from './services/on-boarding-screens.service
       Attachment,
       LocationVendor,
       OnBoardingScreen,
+      Complain,
     ]),
   ],
   controllers: [
@@ -69,6 +75,8 @@ import { OnBoardingScreensService } from './services/on-boarding-screens.service
     AdminsController,
     DocumentsController,
     OnBoardingScreensController,
+    ProfileController,
+    ComplainsController,
   ],
   providers: [
     AuthService,
@@ -86,6 +94,8 @@ import { OnBoardingScreensService } from './services/on-boarding-screens.service
     LocationsVendorsService,
     AdminsService,
     OnBoardingScreensService,
+    ProfileService,
+    ComplainsService,
   ],
 })
 export class AdminModule {}

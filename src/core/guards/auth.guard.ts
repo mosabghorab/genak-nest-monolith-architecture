@@ -12,10 +12,8 @@ import { PUBLIC_KEY } from '../metadata/public.metadata';
 import { AuthedUser } from '../types/authed-user.type';
 import { ALLOW_FOR_KEY } from '../metadata/allow-for.metadata';
 import { Helpers } from '../helpers';
-import { PERMISSIONS_TARGET_KEY } from '../metadata/permissions-target.metadata';
 import { UserType } from '../../modules/shared/enums/user-type.enum';
 import { SKIP_ADMIN_ROLES_KEY } from '../metadata/skip-admin-roles.metadata';
-import { ADMIN_MUST_CAN_DO_KEY } from '../metadata/admin-must-can-do.metadata';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -59,19 +57,19 @@ export class AuthGuard implements CanActivate {
         request.user = authedUser;
         return true;
       }
-      const permissionGroup = this.reflector.getAllAndOverride<any>(
-        PERMISSIONS_TARGET_KEY,
-        [context.getClass()],
-      );
-      const permissionAction = this.reflector.getAllAndOverride<any>(
-        ADMIN_MUST_CAN_DO_KEY,
-        [context.getHandler()],
-      );
-      if (
-        !Helpers.can(permissionAction, permissionGroup, authedUser.adminsRoles)
-      ) {
-        throw new ForbiddenException();
-      }
+      // const permissionGroup = this.reflector.getAllAndOverride<any>(
+      //   PERMISSIONS_TARGET_KEY,
+      //   [context.getClass()],
+      // );
+      // const permissionAction = this.reflector.getAllAndOverride<any>(
+      //   ADMIN_MUST_CAN_DO_KEY,
+      //   [context.getHandler()],
+      // );
+      // if (
+      //   !Helpers.can(permissionAction, permissionGroup, authedUser.adminsRoles)
+      // ) {
+      //   throw new ForbiddenException();
+      // }
     }
     request.user = authedUser;
     return true;

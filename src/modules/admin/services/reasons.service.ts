@@ -22,10 +22,8 @@ export class ReasonsService {
   }
 
   // find all.
-  async findAll(relations?: FindOptionsRelations<Reason>) {
-    return this.reasonRepository.find({
-      relations,
-    });
+  async findAll() {
+    return this.reasonRepository.find({});
   }
 
   // create.

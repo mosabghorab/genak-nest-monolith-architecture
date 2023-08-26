@@ -6,6 +6,7 @@ import { OrderDto } from './order.dto';
 import { ReviewDto } from './review.dto';
 
 export class CustomerDto {
+  // entity fields.
   @Expose()
   id: number;
 
@@ -33,9 +34,7 @@ export class CustomerDto {
   @Expose()
   updatedAt: Date;
 
-  @Expose()
-  accessToken: string;
-
+  // entity relations fields.
   @Expose()
   @Type(() => LocationDto)
   governorate: LocationDto;
@@ -55,4 +54,11 @@ export class CustomerDto {
   @Expose()
   @Type(() => ReviewDto)
   reviews: ReviewDto[];
+
+  // extra fields.
+  @Expose()
+  accessToken: string;
+
+  @Expose()
+  ordersCount: number;
 }

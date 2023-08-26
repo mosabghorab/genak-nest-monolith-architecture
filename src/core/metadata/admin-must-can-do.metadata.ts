@@ -1,7 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
-import { PermissionsActions } from '../../modules/admin/enums/permissions-actions.enum';
+import { PermissionAction } from '../../modules/admin/enums/permission-action.enum';
 
 export const ADMIN_MUST_CAN_DO_KEY = 'adminMustCanDo';
 
-export const AdminMustCanDo = (permissionsActions: PermissionsActions) =>
+export const AdminMustCanDo = (permissionsActions: PermissionAction) =>
   SetMetadata(ADMIN_MUST_CAN_DO_KEY, permissionsActions);

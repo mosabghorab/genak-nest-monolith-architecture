@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsRelations, Repository } from 'typeorm';
+import { Between, FindOptionsRelations, Repository } from 'typeorm';
 import { Complain } from '../../shared/entities/complain.entity';
 import { FindAllComplainsDto } from '../dtos/find-all-complains.dto';
 import { UpdateComplainStatusDto } from '../dtos/update-complain-status.dto';
+import { Helpers } from '../../../core/helpers';
+import { DateFilterOption } from '../enums/date-filter-options.enum';
 
 @Injectable()
 export class ComplainsService {
@@ -21,17 +23,31 @@ export class ComplainsService {
   }
 
   // find all.
-  async findAll(
-    findAllComplainsDto: FindAllComplainsDto,
-    relations?: FindOptionsRelations<Complain>,
-  ) {
+  async findAll(findAllComplainsDto: FindAllComplainsDto) {
     const offset = (findAllComplainsDto.page - 1) * findAllComplainsDto.limit;
+    let dateRange: { startDate: Date; endDate: Date };
+    if (findAllComplainsDto.dateFilterOption) {
+      if (findAllComplainsDto.dateFilterOption === DateFilterOption.CUSTOM) {
+        dateRange = {
+          startDate: findAllComplainsDto.startDate,
+          endDate: findAllComplainsDto.endDate,
+        };
+      } else {
+        dateRange = Helpers.getDateRangeForFilterOption(
+          findAllComplainsDto.dateFilterOption,
+        );
+      }
+    }
     const [complains, count] = await this.complainRepository.findAndCount({
       where: {
         serviceType: findAllComplainsDto.serviceType,
         complainerUserType: findAllComplainsDto.userType,
+        status: findAllComplainsDto.status,
+        createdAt: dateRange
+          ? Between(dateRange.startDate, dateRange.endDate)
+          : null,
       },
-      relations,
+      relations: { order: true },
       skip: offset,
       take: findAllComplainsDto.limit,
     });

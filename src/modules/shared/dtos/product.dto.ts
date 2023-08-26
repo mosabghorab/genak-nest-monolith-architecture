@@ -3,6 +3,7 @@ import { ServiceType } from '../enums/service-type.enum';
 import { OrderItemDto } from './order-item.dto';
 
 export class ProductDto {
+  // entity fields.
   @Expose()
   id: number;
 
@@ -30,7 +31,15 @@ export class ProductDto {
   @Expose()
   updatedAt: Date;
 
+  // entity relations fields.
   @Expose()
   @Type(() => OrderItemDto)
   orderItems: OrderItemDto[];
+
+  // extra fields.
+  @Expose()
+  totalSales: number;
+
+  @Expose()
+  ordersCount: number;
 }

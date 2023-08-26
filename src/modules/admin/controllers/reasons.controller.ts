@@ -14,33 +14,33 @@ import { ReasonsService } from '../services/reasons.service';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { ReasonDto } from '../../shared/dtos/reason.dto';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { CreateReasonDto } from '../dtos/create-reason.dto';
 import { UpdateReasonDto } from '../dtos/update-reason.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.REASONS)
+@PermissionsTarget(PermissionGroup.REASONS)
 @Controller('admin/reasons')
 export class ReasonsController {
   constructor(private readonly reasonsService: ReasonsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(ReasonDto, 'Reason created successfully.')
   @Post()
   async create(@Body() createReasonDto: CreateReasonDto) {
     return this.reasonsService.create(createReasonDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(ReasonDto, 'All reasons.')
   @Get()
   findAll() {
     return this.reasonsService.findAll();
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(ReasonDto, 'One reason.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -51,7 +51,7 @@ export class ReasonsController {
     return reason;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(ReasonDto, 'Reason updated successfully.')
   @Patch(':id')
   async update(
@@ -61,7 +61,7 @@ export class ReasonsController {
     return this.reasonsService.update(id, updateReasonDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(ReasonDto, 'Reason deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

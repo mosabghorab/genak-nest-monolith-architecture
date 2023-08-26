@@ -16,17 +16,6 @@ export class LocationsVendorsService {
     return this.locationVendorRepository.findOne({ where: { id }, relations });
   }
 
-  // find by vendor id.
-  findByVendorId(
-    vendorId: number,
-    relations?: FindOptionsRelations<LocationVendor>,
-  ) {
-    return this.locationVendorRepository.find({
-      where: { vendorId },
-      relations,
-    });
-  }
-
   // remove.
   async remove(id: number) {
     const locationVendor = await this.findOneById(id);

@@ -32,6 +32,7 @@ import { Document } from './shared/entities/document.entity';
 import { Attachment } from './shared/entities/attachment.entity';
 import { VendorModule } from './vendor/vendor.module';
 import { OnBoardingScreen } from './shared/entities/on-boarding-screen.entity';
+import { Setting } from './shared/entities/setting.entity';
 
 @Module({
   imports: [
@@ -86,6 +87,7 @@ import { OnBoardingScreen } from './shared/entities/on-boarding-screen.entity';
             Document,
             Attachment,
             OnBoardingScreen,
+            Setting,
           ],
           synchronize: true,
         };

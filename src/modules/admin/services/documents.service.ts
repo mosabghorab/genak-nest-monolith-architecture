@@ -23,16 +23,12 @@ export class DocumentsService {
   }
 
   // find all.
-  findAll(
-    findAllDocumentsDto: FindAllDocumentsDto,
-    relations?: FindOptionsRelations<Document>,
-  ) {
+  findAll(findAllDocumentsDto: FindAllDocumentsDto) {
     return this.documentRepository.find({
       where: {
         serviceType: findAllDocumentsDto.serviceType,
         active: findAllDocumentsDto.active,
       },
-      relations,
     });
   }
 

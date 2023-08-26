@@ -34,8 +34,8 @@ export class RolesService {
   }
 
   // find all.
-  findAll(relations?: FindOptionsRelations<Role>): Promise<Role[]> {
-    return this.roleRepository.find({ relations });
+  findAll(): Promise<Role[]> {
+    return this.roleRepository.find();
   }
 
   // find one by id.

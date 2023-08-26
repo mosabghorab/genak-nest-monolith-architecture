@@ -8,6 +8,7 @@ import { ReviewDto } from './review.dto';
 import { AttachmentDto } from './attachment.dto';
 
 export class VendorDto {
+  // entity fields.
   @Expose()
   id: number;
 
@@ -56,9 +57,7 @@ export class VendorDto {
   @Expose()
   updatedAt: Date;
 
-  @Expose()
-  accessToken: string;
-
+  // entity relations fields.
   @Expose()
   @Type(() => LocationDto)
   governorate: LocationDto;
@@ -78,4 +77,11 @@ export class VendorDto {
   @Expose()
   @Type(() => AttachmentDto)
   attachments: AttachmentDto[];
+
+  // extra fields.
+  @Expose()
+  accessToken: string;
+
+  @Expose()
+  ordersCount: number;
 }

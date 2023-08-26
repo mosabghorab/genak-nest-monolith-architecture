@@ -14,35 +14,35 @@ import { LocationsService } from '../services/locations.service';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { LocationDto } from '../../shared/dtos/location.dto';
 import { CreateLocationDto } from '../dtos/create-location.dto';
 import { FindAllLocationsDto } from '../dtos/find-all-locations.dto';
 import { UpdateLocationDto } from '../dtos/update-location.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.LOCATIONS)
+@PermissionsTarget(PermissionGroup.LOCATIONS)
 @Controller('admin/locations')
 export class LocationsController {
   constructor(private readonly locationsService: LocationsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(LocationDto, 'Location created successfully.')
   @Post()
   async create(@Body() createLocationDto: CreateLocationDto) {
     return this.locationsService.create(createLocationDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(LocationDto, 'All locations.')
   @Get()
   findAll(@Query() findAllLocationsDto: FindAllLocationsDto) {
     return this.locationsService.findAll(findAllLocationsDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(LocationDto, 'One location.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -53,7 +53,7 @@ export class LocationsController {
     return location;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(LocationDto, 'Location updated successfully.')
   @Patch(':id')
   async update(
@@ -63,7 +63,7 @@ export class LocationsController {
     return this.locationsService.update(id, updateLocationDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(LocationDto, 'Location deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

@@ -1,6 +1,6 @@
 import { Expose, Type } from 'class-transformer';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { RolesPermissionsDto } from './roles-permissions.dto';
 
 export class PermissionDto {
@@ -11,10 +11,10 @@ export class PermissionDto {
   name: string;
 
   @Expose()
-  action: PermissionsActions;
+  action: PermissionAction;
 
   @Expose()
-  group: PermissionsGroups;
+  group: PermissionGroup;
 
   @Expose()
   @Type(() => RolesPermissionsDto)

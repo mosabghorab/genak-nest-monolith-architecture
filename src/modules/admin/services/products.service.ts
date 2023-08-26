@@ -11,6 +11,7 @@ import { Helpers } from '../../../core/helpers';
 import { Constants } from '../../../core/constants';
 import { UpdateProductUploadedFilesDto } from '../dtos/update-product-uploaded-files.dto';
 import { unlinkSync } from 'fs';
+import { ServiceType } from '../../shared/enums/service-type.enum';
 
 @Injectable()
 export class ProductsService {
@@ -28,15 +29,11 @@ export class ProductsService {
   }
 
   // find all.
-  async findAll(
-    findAllProductsDto: FindAllProductsDto,
-    relations?: FindOptionsRelations<Product>,
-  ) {
+  async findAll(findAllProductsDto: FindAllProductsDto) {
     return this.productRepository.find({
       where: {
         serviceType: findAllProductsDto.serviceType,
       },
-      relations,
     });
   }
 
@@ -88,5 +85,31 @@ export class ProductsService {
       throw new NotFoundException('Product not found.');
     }
     return this.productRepository.remove(product);
+  }
+
+  // find products with total sales.
+  async findProductsWithTotalSales(serviceType: ServiceType) {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoin('product.orderItems', 'orderItem')
+      .where('product.serviceType = :serviceType', { serviceType })
+      .select([
+        'product.*',
+        'SUM(orderItem.price * orderItem.quantity) AS totalSales',
+      ])
+      .groupBy('product.id')
+      .getRawMany();
+  }
+
+  // find products with orders count.
+  async findProductsWithOrdersCount(serviceType: ServiceType) {
+    return this.productRepository
+      .createQueryBuilder('product')
+      .leftJoin('product.orderItems', 'orderItem')
+      .leftJoin('orderItem.order', 'order')
+      .where('product.serviceType = :serviceType', { serviceType })
+      .select(['product.*', 'COUNT(DISTINCT order.id) AS ordersCount'])
+      .groupBy('product.id')
+      .getRawMany();
   }
 }

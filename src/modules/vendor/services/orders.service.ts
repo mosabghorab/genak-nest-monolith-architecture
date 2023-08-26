@@ -5,7 +5,6 @@ import { Order } from '../../shared/entities/order.entity';
 import { VendorsService } from './vendors.service';
 import { FindAllOrdersDto } from '../dtos/find-all-orders.dto';
 import { ServiceType } from '../../shared/enums/service-type.enum';
-import { Helpers } from '../../../core/helpers';
 
 @Injectable()
 export class OrdersService {
@@ -35,14 +34,11 @@ export class OrdersService {
   ) {
     const vendor = await this.vendorsService.findOneById(vendorId);
     const queryBuilder = await this.orderRepository.createQueryBuilder('order');
-    if (relations) {
-      Helpers.buildRelationsForQueryBuilder<Order>(
-        queryBuilder,
-        relations,
-        'order',
-      );
-    }
     return await queryBuilder
+      .leftJoinAndSelect('order.customer', 'customer')
+      .leftJoinAndSelect('order.customerAddress', 'customerAddress')
+      .leftJoinAndSelect('order.orderItems', 'orderItem')
+      .leftJoinAndSelect('order.orderStatusHistories', 'orderStatusHistory')
       .where('order.vendorId = :vendorId', { vendorId })
       .andWhere('order.serviceType = :serviceType', {
         serviceType: vendor.serviceType,

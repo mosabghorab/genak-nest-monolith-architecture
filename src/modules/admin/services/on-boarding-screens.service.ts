@@ -31,16 +31,12 @@ export class OnBoardingScreensService {
   }
 
   // find all.
-  async findAll(
-    findAllOnBoardingScreensDto: FindAllOnBoardingScreensDto,
-    relations?: FindOptionsRelations<OnBoardingScreen>,
-  ) {
+  async findAll(findAllOnBoardingScreensDto: FindAllOnBoardingScreensDto) {
     return this.onBoardingScreenRepository.find({
       where: {
         userType: findAllOnBoardingScreensDto.userType,
       },
       order: { index: 'asc' },
-      relations,
     });
   }
 

@@ -10,7 +10,6 @@ import { Admin } from '../entities/admin.entity';
 import { CreateAdminDto } from '../dtos/create-admin.dto';
 import { UpdateAdminDto } from '../dtos/update-admin.dto';
 import { FindAllAdminsDto } from '../dtos/find-all-admins.dto';
-import { Helpers } from '../../../core/helpers';
 import { AdminsRoles } from '../entities/admins-roles.entity';
 import { AdminsRolesService } from './admins-roles.service';
 import { UpdateProfileDto } from '../dtos/update-profile.dto';
@@ -41,27 +40,21 @@ export class AdminsService {
   }
 
   // find all.
-  async findAll(
-    findAllAdminsDto: FindAllAdminsDto,
-    relations?: FindOptionsRelations<Admin>,
-  ) {
+  async findAll(findAllAdminsDto: FindAllAdminsDto) {
     const offset = (findAllAdminsDto.page - 1) * findAllAdminsDto.limit;
-    const queryBuilder = this.adminRepository.createQueryBuilder('admin');
-    if (relations) {
-      Helpers.buildRelationsForQueryBuilder<Admin>(
-        queryBuilder,
-        relations,
-        'admin',
-      );
-    }
-    queryBuilder.skip(offset).take(findAllAdminsDto.limit);
-    const [admins, count] = await queryBuilder.getManyAndCount();
+    const [customers, count] = await this.adminRepository.findAndCount({
+      relations: {
+        adminsRoles: { role: true },
+      },
+      skip: offset,
+      take: findAllAdminsDto.limit,
+    });
     return {
       perPage: findAllAdminsDto.limit,
       currentPage: findAllAdminsDto.page,
       lastPage: Math.ceil(count / findAllAdminsDto.limit),
       total: count,
-      data: admins,
+      data: customers,
     };
   }
 
@@ -110,6 +103,20 @@ export class AdminsService {
     return this.adminRepository.save(admin);
   }
 
+  // remove.
+  async remove(id: number) {
+    const admin = await this.findOneById(id);
+    if (!admin) {
+      throw new NotFoundException('Admin not found.');
+    }
+    return this.adminRepository.remove(admin);
+  }
+
+  // count.
+  count() {
+    return this.adminRepository.count();
+  }
+
   // update profile.
   async updateProfile(adminId: number, updateProfileDto: UpdateProfileDto) {
     const admin = await this.findOneById(adminId);
@@ -137,14 +144,5 @@ export class AdminsService {
     }
     admin.password = changePasswordDto.newPassword;
     return this.adminRepository.save(admin);
-  }
-
-  // remove.
-  async remove(id: number) {
-    const admin = await this.findOneById(id);
-    if (!admin) {
-      throw new NotFoundException('Admin not found.');
-    }
-    return this.adminRepository.remove(admin);
   }
 }

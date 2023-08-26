@@ -1,7 +1,7 @@
 import { SetMetadata } from '@nestjs/common';
-import { PermissionsGroups } from '../../modules/admin/enums/permissions-groups.enum';
+import { PermissionGroup } from '../../modules/admin/enums/permission-group.enum';
 
 export const PERMISSIONS_TARGET_KEY = 'permissionsTarget';
 
-export const PermissionsTarget = (permissionsGroups: PermissionsGroups) =>
+export const PermissionsTarget = (permissionsGroups: PermissionGroup) =>
   SetMetadata(PERMISSIONS_TARGET_KEY, permissionsGroups);

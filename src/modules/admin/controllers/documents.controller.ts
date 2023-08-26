@@ -13,9 +13,9 @@ import { Serialize } from '../../../core/interceptors/serialize.interceptor';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { DocumentsService } from '../services/documents.service';
 import { DocumentDto } from '../../shared/dtos/document.dto';
 import { CreateDocumentDto } from '../dtos/create-document.dto';
@@ -23,26 +23,26 @@ import { FindAllDocumentsDto } from '../dtos/find-all-documents.dto';
 import { UpdateDocumentDto } from '../dtos/update-document.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.DOCUMENTS)
+@PermissionsTarget(PermissionGroup.DOCUMENTS)
 @Controller('admin/documents')
 export class DocumentsController {
   constructor(private readonly documentsService: DocumentsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(DocumentDto, 'Document created successfully.')
   @Post()
   async create(@Body() createDocumentDto: CreateDocumentDto) {
     return this.documentsService.create(createDocumentDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(DocumentDto, 'All documents.')
   @Get()
   findAll(@Query() findAllDocumentsDto: FindAllDocumentsDto) {
     return this.documentsService.findAll(findAllDocumentsDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(DocumentDto, 'One document.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -53,7 +53,7 @@ export class DocumentsController {
     return document;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(DocumentDto, 'Document updated successfully.')
   @Patch(':id')
   async update(
@@ -63,7 +63,7 @@ export class DocumentsController {
     return this.documentsService.update(id, updateDocumentDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(DocumentDto, 'Document deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

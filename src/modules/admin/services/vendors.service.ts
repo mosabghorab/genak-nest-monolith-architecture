@@ -26,6 +26,8 @@ import { LocationVendor } from '../../shared/entities/location-vendor.entity';
 import { LocationsVendorsService } from './locations-vendors.service';
 import { AttachmentStatus } from '../../shared/enums/attachment-status.enum';
 import { FindAllDocumentsDto } from '../dtos/find-all-documents.dto';
+import { ServiceType } from '../../shared/enums/service-type.enum';
+import { DateFilterOption } from '../enums/date-filter-options.enum';
 
 @Injectable()
 export class VendorsService {
@@ -52,26 +54,68 @@ export class VendorsService {
   }
 
   // find all.
-  async findAll(
-    findAllVendorsDto: FindAllVendorsDto,
-    relations?: FindOptionsRelations<Vendor>,
-  ) {
+  async findAll(findAllVendorsDto: FindAllVendorsDto) {
     const offset = (findAllVendorsDto.page - 1) * findAllVendorsDto.limit;
     const queryBuilder = this.vendorRepository.createQueryBuilder('vendor');
-    if (relations) {
-      Helpers.buildRelationsForQueryBuilder<Vendor>(
-        queryBuilder,
-        relations,
-        'vendor',
+    let dateRange: { startDate: Date; endDate: Date };
+    if (findAllVendorsDto.dateFilterOption) {
+      if (findAllVendorsDto.dateFilterOption === DateFilterOption.CUSTOM) {
+        dateRange = {
+          startDate: findAllVendorsDto.startDate,
+          endDate: findAllVendorsDto.endDate,
+        };
+      } else {
+        dateRange = Helpers.getDateRangeForFilterOption(
+          findAllVendorsDto.dateFilterOption,
+        );
+      }
+    }
+    queryBuilder
+      .leftJoinAndSelect('vendor.governorate', 'governorate')
+      .leftJoinAndSelect('vendor.orders', 'order')
+      .addSelect('COUNT(DISTINCT order.id) AS ordersCount');
+    if (findAllVendorsDto.regionsIds) {
+      queryBuilder.innerJoinAndSelect(
+        'vendor.locationsVendors',
+        'locationVendor',
+        findAllVendorsDto.regionsIds
+          ? 'locationVendor.locationId IN (:...regionsIds)'
+          : null,
+        findAllVendorsDto.regionsIds
+          ? { regionsIds: findAllVendorsDto.regionsIds }
+          : null,
+      );
+    } else {
+      queryBuilder.leftJoinAndSelect(
+        'vendor.locationsVendors',
+        'locationVendor',
       );
     }
     queryBuilder
+      .leftJoinAndSelect('locationVendor.location', 'location')
       .where('vendor.serviceType = :serviceType', {
         serviceType: findAllVendorsDto.serviceType,
       })
       .andWhere('vendor.status IN (:...statuses)', {
         statuses: findAllVendorsDto.statuses,
-      })
+      });
+    if (findAllVendorsDto.governorateId) {
+      queryBuilder.andWhere('vendor.governorateId = :governorateId', {
+        governorateId: findAllVendorsDto.governorateId,
+      });
+    }
+    if (findAllVendorsDto.dateFilterOption) {
+      queryBuilder.andWhere(
+        'vendor.createdAt BETWEEN :startDate AND :endDate',
+        {
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      );
+    }
+    queryBuilder
+      .groupBy('vendor.id')
+      .orderBy('ordersCount', findAllVendorsDto.orderByType)
       .skip(offset)
       .take(findAllVendorsDto.limit);
     const [vendors, count] = await queryBuilder.getManyAndCount();
@@ -432,5 +476,40 @@ export class VendorsService {
       throw new NotFoundException('Vendor not found.');
     }
     return this.vendorRepository.remove(vendor);
+  }
+
+  // count.
+  count(serviceType?: ServiceType, status?: VendorStatus) {
+    return this.vendorRepository.count({
+      where: { serviceType, status },
+    });
+  }
+
+  // find latest.
+  findLatest(
+    count: number,
+    serviceType: ServiceType,
+    relations?: FindOptionsRelations<Vendor>,
+  ) {
+    return this.vendorRepository.find({
+      where: { serviceType, status: VendorStatus.PENDING },
+      relations,
+      take: count,
+    });
+  }
+
+  // find vendors best seller with orders count.
+  async findVendorsBestSellerWithOrdersCount(serviceType: ServiceType) {
+    return this.vendorRepository
+      .createQueryBuilder('vendor')
+      .leftJoin('vendor.orders', 'order', 'order.serviceType = :serviceType', {
+        serviceType,
+      })
+      .where('vendor.serviceType = :serviceType', { serviceType })
+      .select(['vendor.*', 'COUNT(DISTINCT order.id) AS ordersCount'])
+      .groupBy('vendor.id')
+      .orderBy('ordersCount', 'DESC')
+      .limit(5)
+      .getRawMany();
   }
 }

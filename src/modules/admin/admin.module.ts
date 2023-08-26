@@ -43,6 +43,21 @@ import { ProfileService } from './services/profile.service';
 import { ComplainsService } from './services/complains.service';
 import { ComplainsController } from './controllers/complains.controller';
 import { Complain } from '../shared/entities/complain.entity';
+import { OrdersService } from './services/orders.service';
+import { OrdersController } from './controllers/orders.controller';
+import { Order } from '../shared/entities/order.entity';
+import { Setting } from '../shared/entities/setting.entity';
+import { SettingsController } from './controllers/settings.controller';
+import { SettingsService } from './services/settings.service';
+import { GeneralStatisticsController } from './controllers/general-statistics.controller';
+import { GeneralStatisticsService } from './services/general-statistics.service';
+import { ReportsService } from './services/reports.service';
+import { ReportsController } from './controllers/reports.controller';
+import { OrderItemService } from './services/order-item.service';
+import { OrderItem } from '../shared/entities/order-item.entity';
+import { ReviewsController } from './controllers/reviews.controller';
+import { ReviewsService } from './services/reviews.service';
+import { Review } from '../shared/entities/review.entity';
 
 @Module({
   imports: [
@@ -62,6 +77,10 @@ import { Complain } from '../shared/entities/complain.entity';
       LocationVendor,
       OnBoardingScreen,
       Complain,
+      Order,
+      Setting,
+      OrderItem,
+      Review,
     ]),
   ],
   controllers: [
@@ -77,6 +96,11 @@ import { Complain } from '../shared/entities/complain.entity';
     OnBoardingScreensController,
     ProfileController,
     ComplainsController,
+    OrdersController,
+    SettingsController,
+    GeneralStatisticsController,
+    ReportsController,
+    ReviewsController,
   ],
   providers: [
     AuthService,
@@ -96,6 +120,12 @@ import { Complain } from '../shared/entities/complain.entity';
     OnBoardingScreensService,
     ProfileService,
     ComplainsService,
+    OrdersService,
+    SettingsService,
+    GeneralStatisticsService,
+    ReportsService,
+    OrderItemService,
+    ReviewsService,
   ],
 })
 export class AdminModule {}

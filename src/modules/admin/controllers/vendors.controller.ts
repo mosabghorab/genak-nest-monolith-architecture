@@ -14,9 +14,9 @@ import { Serialize } from '../../../core/interceptors/serialize.interceptor';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { VendorsService } from '../services/vendors.service';
 import { CreateVendorDto } from '../dtos/create-vendor.dto';
 import { VendorDto } from '../../shared/dtos/vendor.dto';
@@ -25,12 +25,12 @@ import { UpdateVendorDto } from '../dtos/update-vendor.dto';
 import { VendorsPaginationDto } from '../dtos/vendors-pagination.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.VENDORS)
+@PermissionsTarget(PermissionGroup.VENDORS)
 @Controller('admin/vendors')
 export class VendorsController {
   constructor(private readonly vendorsService: VendorsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(VendorDto, 'Vendor created successfully.')
   @Post()
   async create(
@@ -41,18 +41,14 @@ export class VendorsController {
     return this.vendorsService.create(createVendorDto, uploadedFiles);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(VendorsPaginationDto, 'All vendors.')
   @Get()
   findAll(@Query() findAllVendorsDto: FindAllVendorsDto) {
-    return this.vendorsService.findAll(findAllVendorsDto, {
-      governorate: true,
-      locationsVendors: { location: true },
-      orders: true,
-    });
+    return this.vendorsService.findAll(findAllVendorsDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(VendorDto, 'One vendor.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -67,7 +63,7 @@ export class VendorsController {
     return vendor;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(VendorDto, 'Vendor updated successfully.')
   @Patch(':id')
   async update(
@@ -79,7 +75,7 @@ export class VendorsController {
     return this.vendorsService.update(id, updateVendorDto, uploadedFiles);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(VendorDto, 'Vendor deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

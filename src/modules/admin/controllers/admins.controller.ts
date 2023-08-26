@@ -12,8 +12,8 @@ import {
 import { Serialize } from '../../../core/interceptors/serialize.interceptor';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
 import { AdminsService } from '../services/admins.service';
@@ -24,28 +24,26 @@ import { FindAllAdminsDto } from '../dtos/find-all-admins.dto';
 import { UpdateAdminDto } from '../dtos/update-admin.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.ADMINS)
+@PermissionsTarget(PermissionGroup.ADMINS)
 @Controller('admin/admins')
 export class AdminsController {
   constructor(private readonly adminsService: AdminsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(AdminDto, 'Admin created successfully.')
   @Post()
   create(@Body() createAdminDto: CreateAdminDto) {
     return this.adminsService.create(createAdminDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(AdminsPaginationDto, 'All admins.')
   @Get()
   findAll(@Query() findAllAdminsDto: FindAllAdminsDto) {
-    return this.adminsService.findAll(findAllAdminsDto, {
-      adminsRoles: { role: true },
-    });
+    return this.adminsService.findAll(findAllAdminsDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(AdminDto, 'One admin.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -58,14 +56,14 @@ export class AdminsController {
     return admin;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(AdminDto, 'Admin updated successfully.')
   @Patch(':id')
   update(@Param('id') id: number, @Body() updateAdminDto: UpdateAdminDto) {
     return this.adminsService.update(id, updateAdminDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(AdminDto, 'Admin deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

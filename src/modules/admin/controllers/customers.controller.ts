@@ -16,38 +16,34 @@ import { CreateCustomerDto } from '../dtos/create-customer.dto';
 import { CustomerDto } from '../../shared/dtos/customer.dto';
 import { UpdateCustomerDto } from '../dtos/update-customer.dto';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
 import { CustomersPaginationDto } from '../dtos/customers-pagination.dto';
 import { FindAllCustomersDto } from '../dtos/find-all-customers.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.CUSTOMERS)
+@PermissionsTarget(PermissionGroup.CUSTOMERS)
 @Controller('admin/customers')
 export class CustomersController {
   constructor(private readonly customersService: CustomersService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(CustomerDto, 'Customer created successfully.')
   @Post()
   create(@Body() createCustomerDto: CreateCustomerDto) {
     return this.customersService.create(createCustomerDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(CustomersPaginationDto, 'All customers.')
   @Get()
   findAll(@Query() findAllCustomersDto: FindAllCustomersDto) {
-    return this.customersService.findAll(findAllCustomersDto, {
-      governorate: true,
-      region: true,
-      orders: true,
-    });
+    return this.customersService.findAll(findAllCustomersDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(CustomerDto, 'One customer.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -61,7 +57,7 @@ export class CustomersController {
     return customer;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(CustomerDto, 'Customer updated successfully.')
   @Patch(':id')
   update(
@@ -71,7 +67,7 @@ export class CustomersController {
     return this.customersService.update(id, updateCustomerDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(CustomerDto, 'Customer deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

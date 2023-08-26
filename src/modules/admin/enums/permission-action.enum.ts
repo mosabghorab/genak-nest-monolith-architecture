@@ -1,4 +1,4 @@
-export enum PermissionsActions {
+export enum PermissionAction {
   CREATE = 'CREATE',
   UPDATE = 'UPDATE',
   DELETE = 'DELETE',

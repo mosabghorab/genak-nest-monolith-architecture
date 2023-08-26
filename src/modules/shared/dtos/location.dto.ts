@@ -4,6 +4,7 @@ import { LocationVendorDto } from './location-vendor.dto';
 import { CustomerDto } from './customer.dto';
 
 export class LocationDto {
+  // entity fields.
   @Expose()
   id: number;
 
@@ -22,6 +23,7 @@ export class LocationDto {
   @Expose()
   updatedAt: Date;
 
+  // entity relations fields.
   @Expose()
   @Type(() => LocationDto)
   parent: LocationDto;
@@ -45,4 +47,23 @@ export class LocationDto {
   @Expose()
   @Type(() => CustomerDto)
   customersByRegion: CustomerDto[];
+
+  // extra fields.
+  @Expose()
+  vendorsCount: number;
+
+  @Expose()
+  customersCount: number;
+
+  @Expose()
+  ordersCount: number;
+
+  @Expose()
+  documentsRequiredVendorsCount: number;
+
+  @Expose()
+  pendingVendorsCount: number;
+
+  @Expose()
+  activeVendorsCount: number;
 }

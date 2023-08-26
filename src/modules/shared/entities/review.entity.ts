@@ -67,6 +67,6 @@ export class Review {
   @ManyToOne(() => Vendor, (vendor) => vendor.reviews, {
     onDelete: 'CASCADE',
   })
-  @JoinColumn({ name: 'productId' })
+  @JoinColumn({ name: 'vendorId' })
   vendor: Vendor;
 }

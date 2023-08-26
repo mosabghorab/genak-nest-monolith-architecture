@@ -1,4 +1,4 @@
-export enum PermissionsGroups {
+export enum PermissionGroup {
   ROLES = 'ROLES',
   ADMINS = 'ADMINS',
   CUSTOMERS = 'CUSTOMERS',
@@ -9,6 +9,9 @@ export enum PermissionsGroups {
   DOCUMENTS = 'DOCUMENTS',
   LOCATIONS = 'LOCATIONS',
   COMPLAINS = 'COMPLAINS',
+  REVIEWS = 'REVIEWS',
   ON_BOARDING_SCREENS = 'ON_BOARDING_SCREENS',
   SETTINGS = 'SETTINGS',
+  GENERAL_STATISTICS = 'GENERAL_STATISTICS',
+  REPORTS = 'REPORTS',
 }

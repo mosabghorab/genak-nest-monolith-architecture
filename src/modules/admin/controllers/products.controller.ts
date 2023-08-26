@@ -14,9 +14,9 @@ import { Serialize } from '../../../core/interceptors/serialize.interceptor';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { ProductsService } from '../services/products.service';
 import { ProductDto } from '../../shared/dtos/product.dto';
 import { CreateProductDto } from '../dtos/create-product.dto';
@@ -26,12 +26,12 @@ import { UpdateProductDto } from '../dtos/update-product.dto';
 import { UpdateProductUploadedFilesDto } from '../dtos/update-product-uploaded-files.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.PRODUCTS)
+@PermissionsTarget(PermissionGroup.PRODUCTS)
 @Controller('admin/products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(ProductDto, 'Product created successfully.')
   @Post()
   async create(
@@ -45,14 +45,14 @@ export class ProductsController {
     );
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(ProductDto, 'All products.')
   @Get()
   findAll(@Query() findAllProductsDto: FindAllProductsDto) {
     return this.productsService.findAll(findAllProductsDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(ProductDto, 'One product.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -63,7 +63,7 @@ export class ProductsController {
     return product;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(ProductDto, 'Product updated successfully.')
   @Patch(':id')
   async update(
@@ -79,7 +79,7 @@ export class ProductsController {
     );
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(ProductDto, 'Product deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

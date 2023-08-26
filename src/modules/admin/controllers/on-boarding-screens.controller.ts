@@ -14,9 +14,9 @@ import { Serialize } from '../../../core/interceptors/serialize.interceptor';
 import { AllowFor } from '../../../core/metadata/allow-for.metadata';
 import { UserType } from '../../shared/enums/user-type.enum';
 import { PermissionsTarget } from '../../../core/metadata/permissions-target.metadata';
-import { PermissionsGroups } from '../enums/permissions-groups.enum';
+import { PermissionGroup } from '../enums/permission-group.enum';
 import { AdminMustCanDo } from '../../../core/metadata/admin-must-can-do.metadata';
-import { PermissionsActions } from '../enums/permissions-actions.enum';
+import { PermissionAction } from '../enums/permission-action.enum';
 import { OnBoardingScreensService } from '../services/on-boarding-screens.service';
 import { CreateOnBoardingScreenDto } from '../dtos/create-on-boarding-screen.dto';
 import { CreateOnBoardingScreenUploadedFilesDto } from '../dtos/create-on-boarding-screen-uploaded-files.dto';
@@ -26,14 +26,14 @@ import { UpdateOnBoardingScreenDto } from '../dtos/update-on-boarding-screen.dto
 import { UpdateOnBoardingScreenUploadedFilesDto } from '../dtos/update-on-boarding-screen-uploaded-files.dto';
 
 @AllowFor(UserType.ADMIN)
-@PermissionsTarget(PermissionsGroups.ON_BOARDING_SCREENS)
+@PermissionsTarget(PermissionGroup.ON_BOARDING_SCREENS)
 @Controller('admin/on-boarding-screens')
 export class OnBoardingScreensController {
   constructor(
     private readonly onBoardingScreensService: OnBoardingScreensService,
   ) {}
 
-  @AdminMustCanDo(PermissionsActions.CREATE)
+  @AdminMustCanDo(PermissionAction.CREATE)
   @Serialize(OnBoardingScreenDto, 'On boarding screen created successfully.')
   @Post()
   async create(
@@ -47,14 +47,14 @@ export class OnBoardingScreensController {
     );
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(OnBoardingScreenDto, 'All on boarding screens.')
   @Get()
   findAll(@Query() findAllOnBoardingScreensDto: FindAllOnBoardingScreensDto) {
     return this.onBoardingScreensService.findAll(findAllOnBoardingScreensDto);
   }
 
-  @AdminMustCanDo(PermissionsActions.VIEW)
+  @AdminMustCanDo(PermissionAction.VIEW)
   @Serialize(OnBoardingScreenDto, 'One on boarding screen.')
   @Get(':id')
   async findOne(@Param('id') id: number) {
@@ -67,7 +67,7 @@ export class OnBoardingScreensController {
     return onBoardingScreen;
   }
 
-  @AdminMustCanDo(PermissionsActions.UPDATE)
+  @AdminMustCanDo(PermissionAction.UPDATE)
   @Serialize(OnBoardingScreenDto, 'On boarding screen updated successfully.')
   @Patch(':id')
   async update(
@@ -83,7 +83,7 @@ export class OnBoardingScreensController {
     );
   }
 
-  @AdminMustCanDo(PermissionsActions.DELETE)
+  @AdminMustCanDo(PermissionAction.DELETE)
   @Serialize(OnBoardingScreenDto, 'On boarding screen deleted successfully.')
   @Delete(':id')
   async remove(@Param('id') id: number) {

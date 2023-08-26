@@ -12,6 +12,8 @@ import { UpdateCustomerDto } from '../dtos/update-customer.dto';
 import { LocationsService } from './locations.service';
 import { FindAllCustomersDto } from '../dtos/find-all-customers.dto';
 import { Helpers } from '../../../core/helpers';
+import { ServiceType } from '../../shared/enums/service-type.enum';
+import { DateFilterOption } from '../enums/date-filter-options.enum';
 
 @Injectable()
 export class CustomersService {
@@ -40,21 +42,17 @@ export class CustomersService {
   }
 
   // find all.
-  async findAll(
-    findAllCustomersDto: FindAllCustomersDto,
-    relations?: FindOptionsRelations<Customer>,
-  ) {
+  async findAll(findAllCustomersDto: FindAllCustomersDto) {
     const offset = (findAllCustomersDto.page - 1) * findAllCustomersDto.limit;
-    const queryBuilder = this.customerRepository.createQueryBuilder('customer');
-    if (relations) {
-      Helpers.buildRelationsForQueryBuilder<Customer>(
-        queryBuilder,
-        relations,
-        'customer',
-      );
-    }
-    queryBuilder.skip(offset).take(findAllCustomersDto.limit);
-    const [customers, count] = await queryBuilder.getManyAndCount();
+    const [customers, count] = await this.customerRepository.findAndCount({
+      relations: {
+        governorate: true,
+        region: true,
+        orders: true,
+      },
+      skip: offset,
+      take: findAllCustomersDto.limit,
+    });
     return {
       perPage: findAllCustomersDto.limit,
       currentPage: findAllCustomersDto.page,
@@ -136,5 +134,46 @@ export class CustomersService {
       throw new NotFoundException('Customer not found.');
     }
     return this.customerRepository.remove(customer);
+  }
+
+  // count.
+  count() {
+    return this.customerRepository.count();
+  }
+
+  // find customers best-buyer with orders count.
+  async findCustomersBestBuyerWithOrdersCount(
+    serviceType: ServiceType,
+    dateFilterOption: DateFilterOption,
+    startDate: Date,
+    endDate: Date,
+  ) {
+    let dateRange: { startDate: Date; endDate: Date };
+    if (dateFilterOption === DateFilterOption.CUSTOM) {
+      dateRange = {
+        startDate: startDate,
+        endDate: endDate,
+      };
+    } else {
+      dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+    }
+    return this.customerRepository
+      .createQueryBuilder('customer')
+      .leftJoin(
+        'customer.orders',
+        'order',
+        'order.serviceType = :serviceType AND order.createdAt BETWEEN :startDate AND :endDate',
+        {
+          serviceType,
+          startDate: dateRange.startDate,
+          endDate: dateRange.endDate,
+        },
+      )
+      .select(['customer.*', 'COUNT(DISTINCT order.id) AS ordersCount'])
+      .groupBy('customer.id')
+      .having('ordersCount > 0')
+      .orderBy('ordersCount', 'DESC')
+      .limit(5)
+      .getRawMany();
   }
 }

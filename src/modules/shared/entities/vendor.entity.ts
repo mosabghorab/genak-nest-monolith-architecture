@@ -87,7 +87,7 @@ export class Vendor {
   @OneToMany(() => Order, (order) => order.vendor, { cascade: true })
   orders: Order[];
 
-  @OneToMany(() => Review, (review) => review.order, { cascade: true })
+  @OneToMany(() => Review, (review) => review.vendor, { cascade: true })
   reviews: Review[];
 
   @OneToMany(() => Attachment, (attachment) => attachment.vendor, {

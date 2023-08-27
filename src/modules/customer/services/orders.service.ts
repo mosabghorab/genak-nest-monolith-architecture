@@ -16,8 +16,6 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    // private readonly orderItemsService: OrderItemsService,
-    // private readonly orderStatusHistoryService: OrderStatusHistoryService,
     private readonly vendorsService: VendorsService,
     private readonly customerAddressesService: CustomerAddressesService,
   ) {}
@@ -70,18 +68,18 @@ export class OrdersService {
   }
 
   // find all.
-  findAll(
-    customerId: number,
-    findAllOrdersDto: FindAllOrdersDto,
-    relations?: FindOptionsRelations<Order>,
-  ) {
+  findAll(customerId: number, findAllOrdersDto: FindAllOrdersDto) {
     return this.orderRepository.find({
       where: {
         customerId,
         serviceType: findAllOrdersDto.serviceType,
         status: findAllOrdersDto.status,
       },
-      relations,
+      relations: {
+        vendor: true,
+        orderItems: true,
+        orderStatusHistories: true,
+      },
     });
   }
 

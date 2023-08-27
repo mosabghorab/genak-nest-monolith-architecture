@@ -5,13 +5,14 @@ import { Order } from '../../shared/entities/order.entity';
 import { UpdateOrderStatusDto } from '../dtos/update-order-status.dto';
 import { ReasonsService } from './reasons.service';
 import { OrderStatusHistory } from '../entities/order-status-history.entity';
+import { OrderStatus } from '../enums/order-status.enum';
+import { Helpers } from '../../../core/helpers';
 
 @Injectable()
 export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
-    // private readonly orderStatusHistoryService: OrderStatusHistoryService,
     private readonly reasonsService: ReasonsService,
   ) {}
 
@@ -41,14 +42,21 @@ export class OrdersService {
       updateOrderStatusDto.note = reason.name;
     }
     order.status = updateOrderStatusDto.status;
-    const orderStatusHistory: OrderStatusHistory = new OrderStatusHistory();
-    Object.assign(orderStatusHistory, {
+    if (order.status === OrderStatus.ACCEPTED) {
+      order.startTime = new Date();
+    } else if (order.status === OrderStatus.COMPLETED) {
+      order.endTime = new Date();
+      order.averageTimeMinutes = Helpers.calculateTimeDifferenceInMinutes(
+        order.startTime,
+        order.endTime,
+      );
+    }
+    order.orderStatusHistories.push(<OrderStatusHistory>{
       orderId,
       orderStatus: updateOrderStatusDto.status,
       reasonId: updateOrderStatusDto.reasonId,
       note: updateOrderStatusDto.note,
     });
-    order.orderStatusHistories.push(orderStatusHistory);
     return this.orderRepository.save(order);
   }
 }

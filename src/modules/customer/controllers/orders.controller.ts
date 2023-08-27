@@ -29,11 +29,7 @@ export class OrdersController {
     @GetAuthedUser() authedUser: AuthedUser,
     @Query() findAllOrdersDto: FindAllOrdersDto,
   ) {
-    return this.ordersService.findAll(authedUser.id, findAllOrdersDto, {
-      vendor: true,
-      orderItems: true,
-      orderStatusHistories: true,
-    });
+    return this.ordersService.findAll(authedUser.id, findAllOrdersDto);
   }
 
   @Serialize(OrderDto, 'Order re ordered successfully.')

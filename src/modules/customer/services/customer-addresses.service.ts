@@ -27,13 +27,9 @@ export class CustomerAddressesService {
   }
 
   // find all.
-  findAll(
-    customerId: number,
-    relations?: FindOptionsRelations<CustomerAddress>,
-  ) {
+  findAll(customerId: number) {
     return this.customerAddressRepository.find({
       where: { customerId },
-      relations,
     });
   }
 

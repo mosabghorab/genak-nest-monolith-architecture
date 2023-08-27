@@ -20,10 +20,9 @@ export class ReasonsService {
   }
 
   // find all.
-  async findAll(relations?: FindOptionsRelations<Reason>) {
+  async findAll() {
     return this.reasonRepository.find({
       where: { active: true },
-      relations,
     });
   }
 }

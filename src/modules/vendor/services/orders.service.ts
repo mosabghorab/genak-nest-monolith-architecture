@@ -27,11 +27,7 @@ export class OrdersService {
   }
 
   // find all.
-  async findAll(
-    vendorId: number,
-    findAllOrdersDto: FindAllOrdersDto,
-    relations?: FindOptionsRelations<Order>,
-  ) {
+  async findAll(vendorId: number, findAllOrdersDto: FindAllOrdersDto) {
     const vendor = await this.vendorsService.findOneById(vendorId);
     const queryBuilder = await this.orderRepository.createQueryBuilder('order');
     return await queryBuilder

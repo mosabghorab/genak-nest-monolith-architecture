@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, FindOptionsRelations, ILike, Repository } from 'typeorm';
+import { Between, ILike, Repository } from 'typeorm';
 import { Helpers } from '../../../core/helpers';
 import { OrdersService } from './orders.service';
 import { Review } from '../../shared/entities/review.entity';
@@ -47,11 +47,7 @@ export class ReviewsService {
   }
 
   // find all.
-  async findAll(
-    vendorId: number,
-    findAllReviewsDto: FindAllReviewsDto,
-    relations?: FindOptionsRelations<Review>,
-  ) {
+  async findAll(vendorId: number, findAllReviewsDto: FindAllReviewsDto) {
     const { today, tomorrow } = Helpers.getTodayAndTomorrowForADate(
       findAllReviewsDto.date,
     );
@@ -68,7 +64,7 @@ export class ReviewsService {
           createdAt: findAllReviewsDto.date ? Between(today, tomorrow) : null,
         },
       },
-      relations,
+      relations: { order: true },
     });
   }
 }

@@ -78,12 +78,6 @@ export class VendorsService {
       queryBuilder.innerJoinAndSelect(
         'vendor.locationsVendors',
         'locationVendor',
-        findAllVendorsDto.regionsIds
-          ? 'locationVendor.locationId IN (:...regionsIds)'
-          : null,
-        findAllVendorsDto.regionsIds
-          ? { regionsIds: findAllVendorsDto.regionsIds }
-          : null,
       );
     } else {
       queryBuilder.leftJoinAndSelect(
@@ -115,6 +109,7 @@ export class VendorsService {
     }
     queryBuilder
       .groupBy('vendor.id')
+      .addGroupBy('locationVendor.id')
       .orderBy('ordersCount', findAllVendorsDto.orderByType)
       .skip(offset)
       .take(findAllVendorsDto.limit);

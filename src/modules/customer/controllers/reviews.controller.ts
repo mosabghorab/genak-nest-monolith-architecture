@@ -29,8 +29,6 @@ export class ReviewsController {
     @GetAuthedUser() authedUser: AuthedUser,
     @Query() findAllReviewsDto: FindAllReviewsDto,
   ) {
-    return this.reviewsService.findAll(authedUser.id, findAllReviewsDto, {
-      order: true,
-    });
+    return this.reviewsService.findAll(authedUser.id, findAllReviewsDto);
   }
 }

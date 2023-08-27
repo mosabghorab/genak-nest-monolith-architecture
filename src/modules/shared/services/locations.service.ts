@@ -21,10 +21,7 @@ export class LocationsService {
   }
 
   // find all.
-  async findAll(
-    findAllLocationsDto: FindAllLocationsDto,
-    relations?: FindOptionsRelations<Location>,
-  ) {
+  async findAll(findAllLocationsDto: FindAllLocationsDto) {
     if (findAllLocationsDto.parentId) {
       const parent = await this.findOneById(findAllLocationsDto.parentId);
       if (!parent) {
@@ -38,7 +35,6 @@ export class LocationsService {
           : IsNull(),
         active: true,
       },
-      relations,
     });
   }
 }

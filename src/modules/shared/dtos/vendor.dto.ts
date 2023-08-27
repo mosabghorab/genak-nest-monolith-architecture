@@ -84,4 +84,13 @@ export class VendorDto {
 
   @Expose()
   ordersCount: number;
+
+  @Expose()
+  averageTimeMinutes: number;
+
+  @Expose()
+  averageRate: number;
+
+  @Expose()
+  reviewsCount: number;
 }

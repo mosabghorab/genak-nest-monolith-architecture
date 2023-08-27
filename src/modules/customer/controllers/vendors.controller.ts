@@ -14,8 +14,6 @@ export class VendorsController {
   @Serialize(VendorDto, 'All vendors.')
   @Get()
   findAll(@Query() findAllVendorsDto: FindAllVendorsDto) {
-    return this.vendorsService.findAll(findAllVendorsDto, {
-      governorate: true,
-    });
+    return this.vendorsService.findAll(findAllVendorsDto);
   }
 }

@@ -40,24 +40,6 @@ export abstract class Helpers {
     );
   };
 
-  // prepare query builder relations.
-  // static buildRelationsForQueryBuilder = <T>(
-  //   queryBuilder: SelectQueryBuilder<T>,
-  //   relations: FindOptionsRelations<T>,
-  //   alias: string,
-  // ) => {
-  //   for (const relation of Object.keys(relations)) {
-  //     queryBuilder.leftJoinAndSelect(`${alias}.${relation}`, relation);
-  //     if (typeof relations[relation] !== 'boolean') {
-  //       Helpers.buildRelationsForQueryBuilder(
-  //         queryBuilder,
-  //         relations[relation],
-  //         relation,
-  //       );
-  //     }
-  //   }
-  // };
-
   static getTodayAndTomorrowForADate = (date: Date) => {
     const today = new Date(date);
     today.setHours(0, 0, 0, 0);
@@ -148,5 +130,13 @@ export abstract class Helpers {
       default:
         throw new Error('Invalid date filter option');
     }
+  }
+
+  static calculateTimeDifferenceInMinutes(
+    startDate: Date,
+    endDate: Date,
+  ): number {
+    const timeDifferenceMs = endDate.getTime() - startDate.getTime();
+    return Math.floor(timeDifferenceMs / (1000 * 60));
   }
 }

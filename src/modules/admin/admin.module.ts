@@ -58,6 +58,10 @@ import { OrderItem } from '../shared/entities/order-item.entity';
 import { ReviewsController } from './controllers/reviews.controller';
 import { ReviewsService } from './services/reviews.service';
 import { Review } from '../shared/entities/review.entity';
+import { CustomerOrdersController } from './controllers/customer-orders.controller';
+import { CustomerOrdersService } from './services/customer-orders.service';
+import { VendorOrdersController } from './controllers/vendor-orders.controller';
+import { VendorOrdersService } from './services/vendor-orders.service';
 
 @Module({
   imports: [
@@ -101,6 +105,8 @@ import { Review } from '../shared/entities/review.entity';
     GeneralStatisticsController,
     ReportsController,
     ReviewsController,
+    CustomerOrdersController,
+    VendorOrdersController,
   ],
   providers: [
     AuthService,
@@ -126,6 +132,8 @@ import { Review } from '../shared/entities/review.entity';
     ReportsService,
     OrderItemService,
     ReviewsService,
+    CustomerOrdersService,
+    VendorOrdersService,
   ],
 })
 export class AdminModule {}

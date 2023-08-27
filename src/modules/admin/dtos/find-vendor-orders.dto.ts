@@ -10,7 +10,7 @@ import { ServiceType } from '../../shared/enums/service-type.enum';
 import { DateFilterOption } from '../enums/date-filter-options.enum';
 import { OrderStatus } from '../../shared/enums/order-status.enum';
 
-export class FindAllOrdersDto {
+export class FindVendorOrdersDto {
   @IsOptional()
   @IsNumber()
   @Transform(({ value }) => parseInt(value))

@@ -23,27 +23,21 @@ export class OrdersService {
   async findAll(findAllOrdersDto: FindAllOrdersDto) {
     const offset = (findAllOrdersDto.page - 1) * findAllOrdersDto.limit;
     let dateRange: { startDate: Date; endDate: Date };
-    if (findAllOrdersDto.dateFilterOption) {
-      if (findAllOrdersDto.dateFilterOption === DateFilterOption.CUSTOM) {
-        dateRange = {
-          startDate: findAllOrdersDto.startDate,
-          endDate: findAllOrdersDto.endDate,
-        };
-      } else {
-        dateRange = Helpers.getDateRangeForFilterOption(
-          findAllOrdersDto.dateFilterOption,
-        );
-      }
+    if (findAllOrdersDto.dateFilterOption === DateFilterOption.CUSTOM) {
+      dateRange = {
+        startDate: findAllOrdersDto.startDate,
+        endDate: findAllOrdersDto.endDate,
+      };
+    } else {
+      dateRange = Helpers.getDateRangeForFilterOption(
+        findAllOrdersDto.dateFilterOption,
+      );
     }
     const [orders, count] = await this.orderRepository.findAndCount({
       where: {
-        customerId: findAllOrdersDto.customerId,
-        vendorId: findAllOrdersDto.vendorId,
         serviceType: findAllOrdersDto.serviceType,
         status: findAllOrdersDto.status,
-        createdAt: dateRange
-          ? Between(dateRange.startDate, dateRange.endDate)
-          : null,
+        createdAt: Between(dateRange.startDate, dateRange.endDate),
       },
       relations: {
         customer: true,

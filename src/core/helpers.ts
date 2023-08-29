@@ -18,26 +18,13 @@ export abstract class Helpers {
     return `${timestamp}-${randomString}.${fileExtension}`;
   };
 
-  static saveFile = async (
-    filepath: string,
-    filename: string,
-    file: any,
-  ): Promise<boolean> => {
+  static saveFile = async (filepath: string, filename: string, file: any): Promise<void> => {
     await fs.ensureDir(filepath);
     await file.mv(filepath + filename);
-    return true;
   };
 
-  static can = (
-    action: PermissionAction,
-    group: PermissionGroup,
-    adminsRoles: AdminsRoles[],
-  ) => {
-    return adminsRoles.some((e) =>
-      e.role.rolesPermissions.some(
-        (p) => p.permission.action === action && p.permission.group === group,
-      ),
-    );
+  static can = (action: PermissionAction, group: PermissionGroup, adminsRoles: AdminsRoles[]) => {
+    return adminsRoles.some((e) => e.role.rolesPermissions.some((p) => p.permission.action === action && p.permission.group === group));
   };
 
   static getTodayAndTomorrowForADate = (date: Date) => {
@@ -104,24 +91,21 @@ export abstract class Helpers {
           endDate: tomorrow,
         };
       case DateFilterOption.THIS_WEEK: {
-        const { startOfWeek, endOfWeek } =
-          Helpers.getWeekStartAndEndForADate(now);
+        const { startOfWeek, endOfWeek } = Helpers.getWeekStartAndEndForADate(now);
         return {
           startDate: startOfWeek,
           endDate: endOfWeek,
         };
       }
       case DateFilterOption.THIS_MONTH: {
-        const { startOfMonth, endOfMonth } =
-          Helpers.getMonthStartAndEndForADate(now);
+        const { startOfMonth, endOfMonth } = Helpers.getMonthStartAndEndForADate(now);
         return {
           startDate: startOfMonth,
           endDate: endOfMonth,
         };
       }
       case DateFilterOption.THIS_YEAR: {
-        const { startOfYear, endOfYear } =
-          Helpers.getYearStartAndEndForADate(now);
+        const { startOfYear, endOfYear } = Helpers.getYearStartAndEndForADate(now);
         return {
           startDate: startOfYear,
           endDate: endOfYear,
@@ -132,10 +116,7 @@ export abstract class Helpers {
     }
   }
 
-  static calculateTimeDifferenceInMinutes(
-    startDate: Date,
-    endDate: Date,
-  ): number {
+  static calculateTimeDifferenceInMinutes(startDate: Date, endDate: Date): number {
     const timeDifferenceMs = endDate.getTime() - startDate.getTime();
     return Math.floor(timeDifferenceMs / (1000 * 60));
   }

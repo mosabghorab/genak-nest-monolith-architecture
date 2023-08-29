@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { FindOptionsRelations } from 'typeorm/browser';
 import { Vendor } from '../../../shared/entities/vendor.entity';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { Constants } from '../../../../core/constants';
 import { LocationsService } from './locations.service';
 import { CreateVendorDto } from '../dtos/vendors/create-vendor.dto';
@@ -22,6 +22,7 @@ import { DateFilterOption } from '../../enums/date-filter-options.enum';
 import { VendorsValidation } from '../validations/vendors.validation';
 import { Location } from '../../../shared/entities/location.entity';
 import { OrderByType } from '../../../shared/enums/order-by-type.enum';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class VendorsService {
@@ -84,7 +85,7 @@ export class VendorsService {
           endDate: findAllVendorsDto.endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(findAllVendorsDto.dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(findAllVendorsDto.dateFilterOption);
       }
     }
     const queryBuilder: SelectQueryBuilder<Vendor> = this.vendorRepository
@@ -120,7 +121,7 @@ export class VendorsService {
       entities[i].locationsVendors = await this.locationsVendorsService.findAllByVendorId(entities[i].id, {
         location: true,
       });
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return {
       perPage: findAllVendorsDto.limit,
@@ -261,7 +262,7 @@ export class VendorsService {
         endDate: endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
     }
     const {
       entities,
@@ -283,7 +284,7 @@ export class VendorsService {
       .limit(5)
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }

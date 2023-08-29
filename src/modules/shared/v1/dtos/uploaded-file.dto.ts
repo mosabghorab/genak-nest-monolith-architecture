@@ -1,6 +1,6 @@
 import { IsEnum, IsNumber, IsObject, IsString, Max } from 'class-validator';
 import { Transform } from 'class-transformer';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { promisify } from 'util';
 import { FileExtension } from '../../enums/file-extension.enum';
 

@@ -74,7 +74,7 @@ export class VendorsService {
     for (let i = 0; i < entities.length; i++) {
       entities[i]['averageTimeMinutes'] = Math.floor(raw[i]['averageTimeMinutes']) || 0;
       entities[i]['averageRate'] = Math.ceil(raw[i]['averageRate']) || 0;
-      entities[i]['reviewsCount'] = Math.ceil(raw[i]['reviewsCount']);
+      entities[i]['reviewsCount'] = parseInt(raw[i]['reviewsCount']) || 0;
     }
     return entities;
   }

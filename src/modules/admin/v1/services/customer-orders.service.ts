@@ -3,9 +3,9 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { Order } from '../../../shared/entities/order.entity';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
-import { Helpers } from '../../../../core/helpers';
 import { FindCustomerOrdersDto } from '../dtos/customer-orders/find-customer-orders.dto';
 import { CustomersService } from './customers.service';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class CustomerOrdersService {
@@ -36,7 +36,7 @@ export class CustomerOrdersService {
         endDate: findCustomerOrdersDto.endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(findCustomerOrdersDto.dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(findCustomerOrdersDto.dateFilterOption);
     }
     const mainQueryBuilder: SelectQueryBuilder<Order> = this.orderRepository
       .createQueryBuilder('order')

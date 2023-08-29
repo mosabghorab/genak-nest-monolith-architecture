@@ -1,10 +1,10 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, FindOptionsRelations, Repository } from 'typeorm';
-import { Helpers } from '../../../../core/helpers';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
 import { Review } from '../../../shared/entities/review.entity';
 import { FindAllReviewsDto } from '../dtos/reviews/find-all-reviews.dto';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class ReviewsService {
@@ -46,7 +46,7 @@ export class ReviewsService {
         endDate: findAllReviewsDto.endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(findAllReviewsDto.dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(findAllReviewsDto.dateFilterOption);
     }
     const [reviews, count]: [Review[], number] = await this.reviewRepository.findAndCount({
       where: {

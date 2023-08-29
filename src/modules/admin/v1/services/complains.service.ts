@@ -4,8 +4,8 @@ import { Between, FindOptionsRelations, Repository } from 'typeorm';
 import { Complain } from '../../../shared/entities/complain.entity';
 import { FindAllComplainsDto } from '../dtos/complains/find-all-complains.dto';
 import { UpdateComplainStatusDto } from '../dtos/complains/update-complain-status.dto';
-import { Helpers } from '../../../../core/helpers';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class ComplainsService {
@@ -47,7 +47,7 @@ export class ComplainsService {
         endDate: findAllComplainsDto.endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(findAllComplainsDto.dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(findAllComplainsDto.dateFilterOption);
     }
     const [complains, count]: [Complain[], number] = await this.complainRepository.findAndCount({
       where: {

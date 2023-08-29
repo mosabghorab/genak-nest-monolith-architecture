@@ -2,7 +2,7 @@ import { IsEnum, IsNumber, IsObject, IsString, Max } from 'class-validator';
 import { Transform } from 'class-transformer';
 import { ImageExtension } from '../../enums/image-extension.enum';
 import { promisify } from 'util';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 
 export class UploadedImageDto {
   @IsString()

@@ -7,11 +7,11 @@ import { CreateCustomerDto } from '../dtos/customers/create-customer.dto';
 import { UpdateCustomerDto } from '../dtos/customers/update-customer.dto';
 import { LocationsService } from './locations.service';
 import { FindAllCustomersDto } from '../dtos/customers/find-all-customers.dto';
-import { Helpers } from '../../../../core/helpers';
 import { ServiceType } from '../../../shared/enums/service-type.enum';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
 import { CustomersValidation } from '../validations/customers.validation';
 import { OrderByType } from '../../../shared/enums/order-by-type.enum';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class CustomersService {
@@ -80,7 +80,7 @@ export class CustomersService {
     const { entities, raw }: { entities: Customer[]; raw: any[] } = await queryBuilder.getRawAndEntities();
     const count: number = await queryBuilder.getCount();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return {
       perPage: findAllCustomersDto.limit,
@@ -124,7 +124,7 @@ export class CustomersService {
         endDate: endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
     }
     const { entities, raw }: { entities: Customer[]; raw: any[] } = await this.customerRepository
       .createQueryBuilder('customer')
@@ -140,7 +140,7 @@ export class CustomersService {
       .limit(5)
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }

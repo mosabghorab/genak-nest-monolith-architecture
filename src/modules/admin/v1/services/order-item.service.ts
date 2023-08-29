@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, SelectQueryBuilder } from 'typeorm';
 import { OrderItem } from '../../../shared/entities/order-item.entity';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
-import { Helpers } from '../../../../core/helpers';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class OrderItemService {
@@ -18,8 +18,8 @@ export class OrderItemService {
     startDate?: Date,
     endDate?: Date,
   ): Promise<{
-    customOrderItemsTotalSales: string;
-    customOrderItemsTotalQuantities: string;
+    totalSales: string;
+    totalQuantities: string;
   }> {
     let dateRange: { startDate: Date; endDate: Date };
     if (dateFilterOption) {
@@ -29,12 +29,12 @@ export class OrderItemService {
           endDate: endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
       }
     }
     const queryBuilder: SelectQueryBuilder<OrderItem> = this.orderItemRepository
       .createQueryBuilder('orderItem')
-      .select(['SUM(orderItem.price) AS customOrderItemsTotalSales', 'SUM(orderItem.quantity) AS customOrderItemsTotalQuantities'])
+      .select(['SUM(orderItem.price) AS totalSales', 'SUM(orderItem.quantity) AS totalQuantities'])
       .where('orderItem.productId IS NULL');
     if (dateFilterOption) {
       queryBuilder.andWhere('orderItem.createdAt BETWEEN :startDate AND :endDate', {

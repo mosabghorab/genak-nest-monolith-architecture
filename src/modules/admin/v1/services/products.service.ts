@@ -7,12 +7,13 @@ import { FindAllProductsDto } from '../dtos/products/find-all-products.dto';
 import { CreateProductDto } from '../dtos/products/create-product.dto';
 import { UpdateProductDto } from '../dtos/products/update-product.dto';
 import { CreateProductUploadedFilesDto } from '../dtos/products/create-product-uploaded-files.dto';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { Constants } from '../../../../core/constants';
 import { UpdateProductUploadedFilesDto } from '../dtos/products/update-product-uploaded-files.dto';
 import { unlinkSync } from 'fs';
 import { ServiceType } from '../../../shared/enums/service-type.enum';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class ProductsService {
@@ -86,7 +87,7 @@ export class ProductsService {
           endDate: endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
       }
     }
     const {
@@ -113,7 +114,7 @@ export class ProductsService {
       .groupBy('product.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['totalSales'] = raw[i]['totalSales'] || 0;
+      entities[i]['totalSales'] = parseFloat(raw[i]['totalSales']) || 0;
     }
     return entities;
   }
@@ -127,7 +128,7 @@ export class ProductsService {
         endDate: endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
     }
     const {
       entities,
@@ -147,7 +148,7 @@ export class ProductsService {
       .groupBy('product.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }

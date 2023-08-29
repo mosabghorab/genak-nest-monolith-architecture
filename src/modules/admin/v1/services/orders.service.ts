@@ -4,8 +4,8 @@ import { Between, FindOptionsRelations, Repository, SelectQueryBuilder } from 't
 import { Order } from '../../../shared/entities/order.entity';
 import { FindAllOrdersDto } from '../dtos/orders/find-all-orders.dto';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
-import { Helpers } from '../../../../core/helpers';
 import { ServiceType } from '../../../shared/enums/service-type.enum';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class OrdersService {
@@ -44,7 +44,7 @@ export class OrdersService {
         endDate: findAllOrdersDto.endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(findAllOrdersDto.dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(findAllOrdersDto.dateFilterOption);
     }
     const [orders, count]: [Order[], number] = await this.orderRepository.findAndCount({
       where: {
@@ -84,7 +84,7 @@ export class OrdersService {
           endDate: endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
       }
     }
     return this.orderRepository.count({
@@ -109,7 +109,7 @@ export class OrdersService {
           endDate: endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
       }
     }
     const queryBuilder: SelectQueryBuilder<Order> = this.orderRepository

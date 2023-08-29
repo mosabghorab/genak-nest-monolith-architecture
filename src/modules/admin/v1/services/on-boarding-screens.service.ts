@@ -6,7 +6,7 @@ import { OnBoardingScreen } from '../../../shared/entities/on-boarding-screen.en
 import { CreateOnBoardingScreenDto } from '../dtos/on-boarding-screens/create-on-boarding-screen.dto';
 import { UpdateOnBoardingScreenDto } from '../dtos/on-boarding-screens/update-on-boarding-screen.dto';
 import { CreateOnBoardingScreenUploadedFilesDto } from '../dtos/on-boarding-screens/create-on-boarding-screen-uploaded-files.dto';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { Constants } from '../../../../core/constants';
 import { UpdateOnBoardingScreenUploadedFilesDto } from '../dtos/on-boarding-screens/update-on-boarding-screen-uploaded-files.dto';
 import { unlinkSync } from 'fs';

@@ -1,9 +1,4 @@
-import {
-  CallHandler,
-  ExecutionContext,
-  NestInterceptor,
-  UseInterceptors,
-} from '@nestjs/common';
+import { CallHandler, ExecutionContext, NestInterceptor, UseInterceptors } from '@nestjs/common';
 import { plainToInstance } from 'class-transformer';
 import { map, Observable } from 'rxjs';
 
@@ -18,12 +13,9 @@ export function Serialize(dto: ClassConstructor, message: string) {
 class SerializeInterceptor implements NestInterceptor {
   constructor(private dto: ClassConstructor, private message: string) {}
 
-  intercept(
-    context: ExecutionContext,
-    next: CallHandler<any>,
-  ): Observable<any> | Promise<Observable<any>> {
+  intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {
     // run code before connecting to route handler.
-
+    // ...
     return next.handle().pipe(
       map((data: any) => {
         // run code before returning a response.

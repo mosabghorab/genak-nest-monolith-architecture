@@ -13,8 +13,7 @@ export abstract class Constants {
   static attachmentsPath = './public/uploads/attachments/';
   static attachmentsUrl = '/uploads/attachments/';
 
-  static onBoardingScreensImagesPath =
-    './public/uploads/on-boarding-screens-images/';
+  static onBoardingScreensImagesPath = './public/uploads/on-boarding-screens-images/';
   static onBoardingScreensImagesUrl = '/uploads/on-boarding-screens-images/';
 
   static phoneValidationRegx = /^05(9[987542]|6[9876542])\d{6}$/;

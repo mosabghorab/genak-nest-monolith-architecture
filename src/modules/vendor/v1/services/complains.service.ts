@@ -5,7 +5,7 @@ import { OrdersService } from './orders.service';
 import { Complain } from '../../../shared/entities/complain.entity';
 import { CreateComplainDto } from '../dtos/create-complain.dto';
 import { CreateComplainUploadedFilesDto } from '../dtos/create-complain-uploaded-files.dto';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { Constants } from '../../../../core/constants';
 import { VendorsService } from './vendors.service';
 import { ClientUserType } from '../../../shared/enums/client-user-type.enum';

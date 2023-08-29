@@ -6,8 +6,8 @@ import { UpdateOrderStatusDto } from '../dtos/update-order-status.dto';
 import { ReasonsService } from './reasons.service';
 import { OrderStatusHistory } from '../../entities/order-status-history.entity';
 import { OrderStatus } from '../../enums/order-status.enum';
-import { Helpers } from '../../../../core/helpers';
 import { Reason } from '../../entities/reason.entity';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class OrdersService {
@@ -45,7 +45,7 @@ export class OrdersService {
       order.startTime = new Date();
     } else if (order.status === OrderStatus.COMPLETED) {
       order.endTime = new Date();
-      order.averageTimeMinutes = Helpers.calculateTimeDifferenceInMinutes(order.startTime, order.endTime);
+      order.averageTimeMinutes = DateHelpers.calculateTimeDifferenceInMinutes(order.startTime, order.endTime);
     }
     order.orderStatusHistories.push(<OrderStatusHistory>{
       orderId,

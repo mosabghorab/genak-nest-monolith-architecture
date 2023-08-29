@@ -9,7 +9,7 @@ import { UpdateLocationDto } from '../dtos/locations/update-location.dto';
 import { ServiceType } from '../../../shared/enums/service-type.enum';
 import { VendorStatus } from '../../../vendor/enums/vendor-status.enum';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
-import { Helpers } from '../../../../core/helpers';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class LocationsService {
@@ -77,9 +77,9 @@ export class LocationsService {
       .groupBy('location.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['vendorsCount'] = raw[i]['vendorsCount'];
-      entities[i]['customersCount'] = raw[i]['customersCount'];
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['vendorsCount'] = parseInt(raw[i]['vendorsCount']) || 0;
+      entities[i]['customersCount'] = parseInt(raw[i]['customersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }
@@ -94,7 +94,7 @@ export class LocationsService {
           endDate: endDate,
         };
       } else {
-        dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+        dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
       }
     }
     const {
@@ -116,7 +116,7 @@ export class LocationsService {
       .groupBy('location.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }
@@ -130,7 +130,7 @@ export class LocationsService {
         endDate: endDate,
       };
     } else {
-      dateRange = Helpers.getDateRangeForFilterOption(dateFilterOption);
+      dateRange = DateHelpers.getDateRangeForDateFilterOption(dateFilterOption);
     }
     const {
       entities,
@@ -151,7 +151,7 @@ export class LocationsService {
       .groupBy('location.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = raw[i]['ordersCount'];
+      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
     }
     return entities;
   }
@@ -173,9 +173,9 @@ export class LocationsService {
       .groupBy('location.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['documentsRequiredVendorsCount'] = raw[i]['documentsRequiredVendorsCount'];
-      entities[i]['pendingVendorsCount'] = raw[i]['pendingVendorsCount'];
-      entities[i]['activeVendorsCount'] = raw[i]['activeVendorsCount'];
+      entities[i]['documentsRequiredVendorsCount'] = parseInt(raw[i]['documentsRequiredVendorsCount']) || 0;
+      entities[i]['pendingVendorsCount'] = parseInt(raw[i]['pendingVendorsCount']) || 0;
+      entities[i]['activeVendorsCount'] = parseInt(raw[i]['activeVendorsCount']) || 0;
     }
     return entities;
   }
@@ -190,7 +190,7 @@ export class LocationsService {
       .groupBy('location.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['customersCount'] = raw[i]['customersCount'];
+      entities[i]['customersCount'] = parseInt(raw[i]['customersCount']) || 0;
     }
     return entities;
   }

@@ -59,33 +59,33 @@ export class ReportsService {
 
   // find sales reports.
   async findSalesReports(findSalesReportsDto: FindSalesReportsDto): Promise<{
-    customOrderItemsTotalQuantities: string;
+    customOrderItemsTotalQuantities: number;
     ordersCount: number;
-    totalSales: string | number;
+    totalSales: number;
     productsWithTotalSales: Product[];
     governoratesWithOrdersCount: Location[];
-    customOrderItemsTotalSales: string;
+    customOrderItemsTotalSales: number;
   }> {
     const ordersCount: number = await this.ordersService.count(findSalesReportsDto.serviceType);
-    const { totalSales }: { totalSales: string } = await this.ordersService.totalSales(findSalesReportsDto.serviceType);
+    const totalSales: number = parseFloat((await this.ordersService.totalSales(findSalesReportsDto.serviceType)).totalSales) || 0;
     const governoratesWithOrdersCount: Location[] = await this.locationsService.findGovernoratesWithOrdersCount(findSalesReportsDto.serviceType);
     const productsWithTotalSales: Product[] = await this.productsService.findWithTotalSales(findSalesReportsDto.serviceType);
-    const {
-      customOrderItemsTotalSales,
-      customOrderItemsTotalQuantities,
-    }: {
-      customOrderItemsTotalSales: string;
-      customOrderItemsTotalQuantities: string;
-    } =
-      findSalesReportsDto.serviceType == ServiceType.WATER
-        ? await this.orderItemService.findCustomOrderItemsTotalSalesAndQuantities()
-        : {
-            customOrderItemsTotalSales: null,
-            customOrderItemsTotalQuantities: null,
-          };
+    let customOrderItemsTotalSales: number;
+    let customOrderItemsTotalQuantities: number;
+    if (findSalesReportsDto.serviceType === ServiceType.WATER) {
+      const {
+        totalSales,
+        totalQuantities,
+      }: {
+        totalSales: string;
+        totalQuantities: string;
+      } = await this.orderItemService.findCustomOrderItemsTotalSalesAndQuantities();
+      customOrderItemsTotalSales = parseFloat(totalSales) || 0;
+      customOrderItemsTotalQuantities = parseInt(totalQuantities) || 0;
+    }
     return {
       ordersCount,
-      totalSales: totalSales || 0,
+      totalSales,
       customOrderItemsTotalSales,
       customOrderItemsTotalQuantities,
       governoratesWithOrdersCount,
@@ -95,16 +95,16 @@ export class ReportsService {
 
   // find sales reports with filter.
   async findSalesReportsWithFilter(findSalesReportsWithFilterDto: FindSalesReportsWithFilterDto): Promise<{
-    customOrderItemsTotalQuantities: string | number;
+    customOrderItemsTotalQuantities: number;
     ordersCount: number;
     vendorsBestSellersWithOrdersCount: Vendor[];
     customersBestBuyersWithOrdersCount: Customer[];
     productsWithOrdersCount: Product[];
-    totalSales: string | number;
+    totalSales: number;
     regionsWithOrdersCount: Location[];
     productsWithTotalSales: Product[];
     governoratesWithOrdersCount: Location[];
-    customOrderItemsTotalSales: string | number;
+    customOrderItemsTotalSales: number;
   }> {
     const ordersCount: number = await this.ordersService.count(
       findSalesReportsWithFilterDto.serviceType,
@@ -112,12 +112,18 @@ export class ReportsService {
       findSalesReportsWithFilterDto.startDate,
       findSalesReportsWithFilterDto.endDate,
     );
-    const { totalSales }: { totalSales: string } = await this.ordersService.totalSales(
-      findSalesReportsWithFilterDto.serviceType,
-      findSalesReportsWithFilterDto.dateFilterOption,
-      findSalesReportsWithFilterDto.startDate,
-      findSalesReportsWithFilterDto.endDate,
-    );
+    const totalSales: number =
+      parseFloat(
+        (
+          await this.ordersService.totalSales(
+            findSalesReportsWithFilterDto.serviceType,
+            findSalesReportsWithFilterDto.dateFilterOption,
+            findSalesReportsWithFilterDto.startDate,
+            findSalesReportsWithFilterDto.endDate,
+          )
+        ).totalSales,
+      ) || 0;
+
     const governoratesWithOrdersCount: Location[] = await this.locationsService.findGovernoratesWithOrdersCount(
       findSalesReportsWithFilterDto.serviceType,
       findSalesReportsWithFilterDto.dateFilterOption,
@@ -158,28 +164,28 @@ export class ReportsService {
       findSalesReportsWithFilterDto.startDate,
       findSalesReportsWithFilterDto.endDate,
     );
-    const {
-      customOrderItemsTotalSales,
-      customOrderItemsTotalQuantities,
-    }: {
-      customOrderItemsTotalSales: string;
-      customOrderItemsTotalQuantities: string;
-    } =
-      findSalesReportsWithFilterDto.serviceType === ServiceType.WATER
-        ? await this.orderItemService.findCustomOrderItemsTotalSalesAndQuantities(
-            findSalesReportsWithFilterDto.dateFilterOption,
-            findSalesReportsWithFilterDto.startDate,
-            findSalesReportsWithFilterDto.endDate,
-          )
-        : {
-            customOrderItemsTotalSales: null,
-            customOrderItemsTotalQuantities: null,
-          };
+    let customOrderItemsTotalSales: number;
+    let customOrderItemsTotalQuantities: number;
+    if (findSalesReportsWithFilterDto.serviceType === ServiceType.WATER) {
+      const {
+        totalSales,
+        totalQuantities,
+      }: {
+        totalSales: string;
+        totalQuantities: string;
+      } = await this.orderItemService.findCustomOrderItemsTotalSalesAndQuantities(
+        findSalesReportsWithFilterDto.dateFilterOption,
+        findSalesReportsWithFilterDto.startDate,
+        findSalesReportsWithFilterDto.endDate,
+      );
+      customOrderItemsTotalSales = parseFloat(totalSales) || 0;
+      customOrderItemsTotalQuantities = parseInt(totalQuantities) || 0;
+    }
     return {
       ordersCount,
-      totalSales: totalSales || 0,
-      customOrderItemsTotalSales: customOrderItemsTotalSales || 0,
-      customOrderItemsTotalQuantities: customOrderItemsTotalQuantities || 0,
+      totalSales,
+      customOrderItemsTotalSales,
+      customOrderItemsTotalQuantities,
       governoratesWithOrdersCount,
       productsWithTotalSales,
       regionsWithOrdersCount,

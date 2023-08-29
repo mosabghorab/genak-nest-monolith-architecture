@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Between, ILike, Repository } from 'typeorm';
-import { Helpers } from '../../../../core/helpers';
 import { VendorsService } from './vendors.service';
 import { OrdersService } from './orders.service';
 import { Review } from '../../../shared/entities/review.entity';
@@ -9,6 +8,7 @@ import { CreateReviewDto } from '../dtos/create-review.dto';
 import { FindAllReviewsDto } from '../dtos/find-all-reviews.dto';
 import { ClientUserType } from '../../../shared/enums/client-user-type.enum';
 import { Order } from '../../../shared/entities/order.entity';
+import { DateHelpers } from '../../../../core/helpers/date.helpers';
 
 @Injectable()
 export class ReviewsService {
@@ -41,7 +41,7 @@ export class ReviewsService {
     }: {
       today: Date;
       tomorrow: Date;
-    } = Helpers.getTodayAndTomorrowForADate(findAllReviewsDto.date);
+    } = DateHelpers.getTodayAndTomorrowForADate(findAllReviewsDto.date);
     return this.reviewRepository.find({
       where: {
         customerId,

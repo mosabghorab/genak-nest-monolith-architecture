@@ -5,7 +5,7 @@ import { DocumentsService } from '../services/documents.service';
 import { Document } from '../../../shared/entities/document.entity';
 import { DocumentType } from '../../../shared/enums/document-type.enum';
 import { ImageExtension } from '../../../shared/enums/image-extension.enum';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { FileExtension } from '../../../shared/enums/file-extension.enum';
 import { CreateVendorDto } from '../dtos/vendors/create-vendor.dto';
 import { Location } from '../../../shared/entities/location.entity';

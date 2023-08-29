@@ -10,7 +10,7 @@ import { CreateAttachmentDto } from '../dtos/create-attachment.dto';
 import { AttachmentStatus } from '../../../shared/enums/attachment-status.enum';
 import { DocumentType } from '../../../shared/enums/document-type.enum';
 import { ImageExtension } from '../../../shared/enums/image-extension.enum';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { FileExtension } from '../../../shared/enums/file-extension.enum';
 import { Attachment } from '../../../shared/entities/attachment.entity';
 

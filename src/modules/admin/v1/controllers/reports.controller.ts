@@ -48,12 +48,12 @@ export class ReportsController {
   @Serialize(SalesReportsDto, 'Sales reports.')
   @Get('sales-reports')
   findSalesReports(@Query() findSalesReportsDto: FindSalesReportsDto): Promise<{
-    customOrderItemsTotalQuantities: string;
+    customOrderItemsTotalQuantities: number;
     ordersCount: number;
-    totalSales: string | number;
+    totalSales: number;
     productsWithTotalSales: Product[];
     governoratesWithOrdersCount: Location[];
-    customOrderItemsTotalSales: string;
+    customOrderItemsTotalSales: number;
   }> {
     return this.reportsService.findSalesReports(findSalesReportsDto);
   }
@@ -62,16 +62,16 @@ export class ReportsController {
   @Serialize(SalesReportsWithFilterDto, 'Sales reports with filter.')
   @Get('sales-reports-with-filter')
   findSalesReportsWithFilter(@Query() findSalesReportsWithFilterDto: FindSalesReportsWithFilterDto): Promise<{
-    customOrderItemsTotalQuantities: string | number;
+    customOrderItemsTotalQuantities: number;
     ordersCount: number;
     vendorsBestSellersWithOrdersCount: Vendor[];
     customersBestBuyersWithOrdersCount: Customer[];
     productsWithOrdersCount: Product[];
-    totalSales: string | number;
+    totalSales: number;
     regionsWithOrdersCount: Location[];
     productsWithTotalSales: Product[];
     governoratesWithOrdersCount: Location[];
-    customOrderItemsTotalSales: string | number;
+    customOrderItemsTotalSales: number;
   }> {
     return this.reportsService.findSalesReportsWithFilter(findSalesReportsWithFilterDto);
   }

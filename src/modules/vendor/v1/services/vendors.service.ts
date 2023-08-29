@@ -6,7 +6,7 @@ import { Vendor } from '../../../shared/entities/vendor.entity';
 import { SignUpDto } from '../dtos/sign-up.dto';
 import { LocationsService } from '../../../shared/v1/services/locations.service';
 import { SignUpUploadedFilesDto } from '../dtos/sign-up-uploaded-files.dto';
-import { Helpers } from '../../../../core/helpers';
+import { Helpers } from '../../../../core/helpers/helpers';
 import { Constants } from '../../../../core/constants';
 import { UpdateProfileDto } from '../dtos/update-profile.dto';
 import { UpdateProfileUploadedFilesDto } from '../dtos/update-profile-uploaded-files.dto';

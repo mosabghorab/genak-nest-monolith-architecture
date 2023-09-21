@@ -10,8 +10,8 @@ import { FindAllCustomersDto } from '../dtos/customers/find-all-customers.dto';
 import { ServiceType } from '../../../shared/enums/service-type.enum';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
 import { CustomersValidation } from '../validations/customers.validation';
-import { OrderByType } from '../../../shared/enums/order-by-type.enum';
 import { DateHelpers } from '../../../../core/helpers/date.helpers';
+import { OrderByType } from '../../../shared/enums/order-by-type.enum';
 
 @Injectable()
 export class CustomersService {
@@ -73,14 +73,16 @@ export class CustomersService {
       .leftJoinAndSelect('customer.governorate', 'governorate')
       .leftJoinAndSelect('customer.region', 'region')
       .leftJoin('customer.orders', 'order')
-      .addSelect('COUNT(DISTINCT order.id)', 'ordersCount')
+      .addSelect('COUNT(DISTINCT order.id)', 'orders_count')
       .groupBy('customer.id')
+      .addGroupBy('governorate.id')
+      .addGroupBy('region.id')
       .skip(offset)
       .take(findAllCustomersDto.limit);
     const { entities, raw }: { entities: Customer[]; raw: any[] } = await queryBuilder.getRawAndEntities();
     const count: number = await queryBuilder.getCount();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['orders_count']) || 0;
     }
     return {
       perPage: findAllCustomersDto.limit,
@@ -133,14 +135,14 @@ export class CustomersService {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       })
-      .addSelect('COUNT(DISTINCT order.id)', 'ordersCount')
+      .addSelect('COUNT(DISTINCT order.id)', 'orders_count')
       .groupBy('customer.id')
-      .having('ordersCount > 0')
-      .orderBy('ordersCount', OrderByType.DESC)
+      .having('COUNT(DISTINCT order.id) > 0')
+      .orderBy('orders_count', OrderByType.DESC)
       .limit(5)
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['orders_count']) || 0;
     }
     return entities;
   }

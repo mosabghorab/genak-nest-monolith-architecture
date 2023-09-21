@@ -1,0 +1,7 @@
+/node_modules
+Dockerfile
+package-lock.json
+/dist
+docker-*.yml
+.env.dev
+.env.prod

@@ -21,8 +21,8 @@ import { ServiceType } from '../../../shared/enums/service-type.enum';
 import { DateFilterOption } from '../../enums/date-filter-options.enum';
 import { VendorsValidation } from '../validations/vendors.validation';
 import { Location } from '../../../shared/entities/location.entity';
-import { OrderByType } from '../../../shared/enums/order-by-type.enum';
 import { DateHelpers } from '../../../../core/helpers/date.helpers';
+import { OrderByType } from '../../../shared/enums/order-by-type.enum';
 
 @Injectable()
 export class VendorsService {
@@ -92,7 +92,7 @@ export class VendorsService {
       .createQueryBuilder('vendor')
       .leftJoinAndSelect('vendor.governorate', 'governorate')
       .leftJoin('vendor.orders', 'order')
-      .addSelect('COUNT(order.id)', ' ordersCount');
+      .addSelect('COUNT(DISTINCT order.id)', 'orders_count');
     if (findAllVendorsDto.regionsIds) {
       queryBuilder.innerJoin('vendor.locationsVendors', 'locationVendor', 'locationVendor.locationId IN (:...regionsIds)', { regionsIds: findAllVendorsDto.regionsIds });
     }
@@ -114,14 +114,14 @@ export class VendorsService {
         endDate: dateRange.endDate,
       });
     }
-    queryBuilder.groupBy('vendor.id').orderBy('ordersCount', findAllVendorsDto.orderByType).skip(offset).take(findAllVendorsDto.limit);
+    queryBuilder.groupBy('vendor.id').addGroupBy('governorate.id').orderBy('orders_count', findAllVendorsDto.orderByType).skip(offset).take(findAllVendorsDto.limit);
     const { entities, raw }: { entities: Vendor[]; raw: any[] } = await queryBuilder.getRawAndEntities();
     const count: number = await queryBuilder.getCount();
     for (let i = 0; i < entities.length; i++) {
       entities[i].locationsVendors = await this.locationsVendorsService.findAllByVendorId(entities[i].id, {
         location: true,
       });
-      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['orders_count']) || 0;
     }
     return {
       perPage: findAllVendorsDto.limit,
@@ -276,15 +276,15 @@ export class VendorsService {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       })
-      .addSelect('COUNT(DISTINCT order.id)', 'ordersCount')
+      .addSelect('COUNT(DISTINCT order.id)', 'orders_count')
       .where('vendor.serviceType = :serviceType', { serviceType })
       .groupBy('vendor.id')
-      .having('ordersCount > 0')
-      .orderBy('ordersCount', OrderByType.DESC)
+      .having('COUNT(DISTINCT order.id) > 0')
+      .orderBy('orders_count', OrderByType.DESC)
       .limit(5)
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['orders_count']) || 0;
     }
     return entities;
   }

@@ -1,0 +1,9 @@
+version: "3"
+services:
+  genak:
+    image: mosabghorab/genak-nest-monolith-architecture
+    build:
+      context: .
+      target: prod
+    env_file:
+      - .env.prod

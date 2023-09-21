@@ -1,12 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { Order } from './order.entity';
 import { Product } from './product.entity';
 
@@ -21,7 +13,7 @@ export class OrderItem {
   @Column({ nullable: true })
   productId?: number;
 
-  @Column({ type: 'double' })
+  @Column({ type: 'numeric' })
   price: number;
 
   @Column({ nullable: true })

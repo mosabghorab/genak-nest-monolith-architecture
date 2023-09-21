@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { CustomerAddress } from '../../customer/entities/customer-address.entity';
 import { ServiceType } from '../enums/service-type.enum';
 import { OrderStatus } from '../enums/order-status.enum';
@@ -51,13 +42,13 @@ export class Order {
   @Column({ nullable: true })
   note?: string;
 
-  @Column({ type: 'double' })
+  @Column({ type: 'numeric' })
   total: number;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   startTime?: Date;
 
-  @Column({ type: 'datetime', nullable: true })
+  @Column({ type: 'timestamp', nullable: true })
   endTime?: Date;
 
   @Column({ nullable: true })
@@ -80,13 +71,9 @@ export class Order {
   @OneToMany(() => Complain, (complain) => complain.order, { cascade: true })
   complains: Complain[];
 
-  @OneToMany(
-    () => OrderStatusHistory,
-    (orderStatusHistory) => orderStatusHistory.order,
-    {
-      cascade: true,
-    },
-  )
+  @OneToMany(() => OrderStatusHistory, (orderStatusHistory) => orderStatusHistory.order, {
+    cascade: true,
+  })
   orderStatusHistories: OrderStatusHistory[];
 
   // many to one.
@@ -102,13 +89,9 @@ export class Order {
   @JoinColumn({ name: 'vendorId' })
   vendor: Vendor;
 
-  @ManyToOne(
-    () => CustomerAddress,
-    (customerAddress) => customerAddress.orders,
-    {
-      onDelete: 'CASCADE',
-    },
-  )
+  @ManyToOne(() => CustomerAddress, (customerAddress) => customerAddress.orders, {
+    onDelete: 'CASCADE',
+  })
   @JoinColumn({ name: 'customerAddressId' })
   customerAddress: CustomerAddress;
 }

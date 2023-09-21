@@ -1,11 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { ServiceType } from '../enums/service-type.enum';
 import { OrderItem } from './order-item.entity';
 
@@ -20,7 +13,7 @@ export class Product {
   @Column({ type: 'enum', enum: ServiceType })
   serviceType: ServiceType;
 
-  @Column({ type: 'double' })
+  @Column({ type: 'numeric' })
   price: number;
 
   @Column()

@@ -38,7 +38,7 @@ import { Setting } from './shared/entities/setting.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.' + (process.env.NODE_ENV || 'development'),
+      envFilePath: '.env.' + (process.env.NODE_ENV || 'dev'),
     }),
     JwtModule.registerAsync({
       global: true,
@@ -62,10 +62,15 @@ import { Setting } from './shared/entities/setting.entity';
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
         return {
-          type: 'mysql',
-          database: configService.get<string>('DATABASE_NAME'),
+          type: 'postgres',
+          host: configService.get<string>('DATABASE_HOST'),
           username: configService.get<string>('DATABASE_USERNAME'),
           password: configService.get<string>('DATABASE_PASSWORD'),
+          database: configService.get<string>('DATABASE_NAME'),
+          // ssl: {
+          //   require: true,
+          //   rejectUnauthorized: false, // You may need to set this option to true depending on your server's SSL/TLS configuration
+          // },
           entities: [
             Customer,
             Admin,

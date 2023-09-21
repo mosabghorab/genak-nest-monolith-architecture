@@ -109,12 +109,12 @@ export class ProductsService {
             }
           : null,
       )
-      .addSelect('SUM(orderItem.price * orderItem.quantity)', 'totalSales')
+      .addSelect('SUM(orderItem.price * orderItem.quantity)', 'total_sales')
       .where('product.serviceType = :serviceType', { serviceType })
       .groupBy('product.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['totalSales'] = parseFloat(raw[i]['totalSales']) || 0;
+      entities[i]['totalSales'] = parseFloat(raw[i]['total_sales']) || 0;
     }
     return entities;
   }
@@ -143,12 +143,12 @@ export class ProductsService {
         startDate: dateRange.startDate,
         endDate: dateRange.endDate,
       })
-      .addSelect('COUNT(DISTINCT order.id)', 'ordersCount')
+      .addSelect('COUNT(DISTINCT order.id)', 'orders_count')
       .where('product.serviceType = :serviceType', { serviceType })
       .groupBy('product.id')
       .getRawAndEntities();
     for (let i = 0; i < entities.length; i++) {
-      entities[i]['ordersCount'] = parseInt(raw[i]['ordersCount']) || 0;
+      entities[i]['ordersCount'] = parseInt(raw[i]['orders_count']) || 0;
     }
     return entities;
   }

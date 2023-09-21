@@ -1,13 +1,4 @@
-import {
-  Column,
-  CreateDateColumn,
-  Entity,
-  JoinColumn,
-  ManyToOne,
-  OneToMany,
-  PrimaryGeneratedColumn,
-  UpdateDateColumn,
-} from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
 import { VendorStatus } from '../../vendor/enums/vendor-status.enum';
 import { ServiceType } from '../enums/service-type.enum';
 import { Location } from './location.entity';
@@ -36,10 +27,10 @@ export class Vendor {
   @Column()
   governorateId: number;
 
-  @Column({ type: 'double', nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   lat?: number;
 
-  @Column({ type: 'double', nullable: true })
+  @Column({ type: 'numeric', nullable: true })
   lng?: number;
 
   @Column({ nullable: true })

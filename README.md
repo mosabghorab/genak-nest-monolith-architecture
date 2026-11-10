@@ -1,73 +1,74 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
+# Genak: NestJS Monolith Architecture
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Genak is the backend of a multi-vendor ordering platform (customers, vendors and admins), built as a **modular monolith in NestJS**. It is a personal architecture project, not a production system.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+I built the same platform twice, on purpose:
 
-## Description
+- **This repository**: one deployable application, organised into clear modules.
+- **[genak-nest-microservices-architecture](https://github.com/mosabghorab/genak-nest-microservices-architecture)**: the same domain split into 19 services that communicate over RabbitMQ.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Building both let me compare the two architectures on the same problem, instead of in theory (see [Monolith vs. microservices](#monolith-vs-microservices) below).
 
-## Installation
+## Architecture
 
-```bash
-$ npm install
+```
+  Clients ──▶ Nginx (port 80) ──▶ Genak (NestJS, port 3000) ──▶ PostgreSQL
+                                   │
+                                   ├── admin     module
+                                   ├── customer  module
+                                   ├── vendor    module
+                                   └── shared    module (entities and services used by all)
 ```
 
-## Running the app
+- **One application, four modules** organised by audience: `admin`, `customer`, `vendor`, plus a `shared` module for the common domain.
+- **Around 100 REST endpoints**, all URI-versioned (`/api/v1/...`).
+- Inside each module: `controllers → services → TypeORM repositories`, with separate `dtos` and `validations` folders.
+
+## Domain model
+
+Orders (with items and a full status history), products, vendors and their service locations, customers and addresses, reviews, complaints, reasons, documents, attachments, on-boarding screens and settings. Admin access is controlled by **roles and permissions** (role-based access control) stored in the database.
+
+## Cross-cutting concerns (`src/core`)
+
+- **Global authentication guard** (JWT) applied to every route, driven by metadata decorators: `@Public()` for open endpoints, `@AllowFor(...)` to restrict a route to customers, vendors or admins, and permission metadata (`admin-must-can-do`) checked against the admin's roles.
+- **Serialisation interceptor**: responses are mapped to DTOs, so internal fields never reach clients.
+- **Unified API response class** for a consistent response shape.
+- **Global response caching** (`@nestjs/cache-manager`, 10-second TTL), with the configuration ready for a Redis store.
+- **Validation at the edge**: global `ValidationPipe` with whitelisting and transformation.
+- Response compression, file uploads and static file serving.
+
+## Deployment
+
+- **Multi-stage Dockerfile** with separate `dev` and `prod` targets.
+- `docker-compose-dev.yml`: the application with hot reload, plus PostgreSQL.
+- `docker-compose-prod.yml`: production image published as `mosabghorab/genak-nest-monolith-architecture`.
+- **Nginx** reverse proxy in front of the application.
+
+## Monolith vs. microservices
+
+| | Monolith (this repo) | Microservices |
+|---|---|---|
+| Deployment | One container | 19 containers, plus RabbitMQ and Nginx routing |
+| Communication between parts | In-process function calls | RPC and events over RabbitMQ (50 message patterns) |
+| Data access | One database connection, joins across the whole domain | Each service reaches other domains through messages |
+| Consistency | Simple: one transaction can cover a whole operation | Harder: an operation may span several services |
+| Development speed | Faster to build and debug | More setup, more moving parts |
+| Scaling | Scale the whole application | Scale each service independently |
+
+My conclusion: for a product of this size and team, the monolith is the better starting point. The microservices version earns its extra complexity only when parts of the system need to scale or be deployed independently.
+
+## Tech stack
+
+NestJS 10 · TypeScript · PostgreSQL · TypeORM · JWT · cache-manager · Docker (multi-stage) · Docker Compose · Nginx
+
+## Running locally
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+docker compose -f docker-compose-dev.yml up --build
 ```
 
-## Test
+The API is then available at `http://localhost:3000/api/v1/...`.
 
-```bash
-# unit tests
-$ npm run test
+## Author
 
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
+Mosab Ghorab, software engineer (Flutter, NestJS)
